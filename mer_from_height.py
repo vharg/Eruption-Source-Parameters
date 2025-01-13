@@ -9,8 +9,6 @@ Website: [mahmudm.com](http://mahmudm.com)
 
 
 '''
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -30,6 +28,7 @@ class MERPredictorFromHeight:
         self.yvar = 'MER_kg/s'
         self._prepare_data()
         self._fit_model()
+        self.posterior_samples=None
 
     
     def set_xvar(self, new_xvar: str):
@@ -72,9 +71,6 @@ class MERPredictorFromHeight:
         self.data['log_y'] = np.log10(self.data[self.yvar])
 
     def _fit_model(self):
-        """
-        Performs Bayesian linear regression using Maximum Likelihood Estimation (MLE).
-        """
         X = np.vstack([np.ones(self.data.shape[0]), self.data['log_x']]).T
         y = self.data['log_y'].values
 
@@ -84,20 +80,20 @@ class MERPredictorFromHeight:
         self.X = X
         self.y = y
         self.residuals = residuals
+        self.posterior_samples = None # Clear cache after model fit
 
     def sample_posterior(self, size: int = 10000) -> pd.DataFrame:
-        """
-        Draw samples from the posterior distributions of the model parameters.
+        if self.posterior_samples is not None:
+            return self.posterior_samples  # Use cached samples if available
 
-        :param size: Number of posterior samples to draw.
-        :return: DataFrame of sampled parameters (intercept, slope, sigma2).
-        """
         samples = []
         for _ in range(size):
             sigma2_sample = invgamma.rvs(self.data.shape[0] / 2, scale=self.sigma2 * self.data.shape[0] / 2)
             beta_sample = multivariate_normal.rvs(mean=self.beta, cov=sigma2_sample * np.linalg.inv(self.X.T @ self.X))
             samples.append([*beta_sample, sigma2_sample])
-        return pd.DataFrame(samples, columns=['intercept', 'slope', 'sigma2'])
+        
+        self.posterior_samples = pd.DataFrame(samples, columns=['intercept', 'slope', 'sigma2'])
+        return self.posterior_samples
 
     def predictive_intervals(self, x: np.ndarray, alpha: float = 0.05) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -199,27 +195,68 @@ class MERPredictorFromHeight:
         
         return predictions
 
-    def plot_posterior_predictive(self):
-        """
-        Plot posterior predictive PDFs and CDFs.
-        """
-        x_vals = np.linspace(self.data[self.xvar].min(), self.data[self.xvar].max(), 100)
-        log_x_vals = np.log10(x_vals)
-        y_mean = self.beta[0] + self.beta[1] * log_x_vals
+    # def plot_posterior_predictive(self):
+    #     """
+    #     Plot posterior predictive PDFs and CDFs.
+    #     """
+    #     x_vals = np.linspace(self.data[self.xvar].min(), self.data[self.xvar].max(), 100)
+    #     log_x_vals = np.log10(x_vals)
+    #     y_mean = self.beta[0] + self.beta[1] * log_x_vals
 
-        lower, upper = self.predictive_intervals(x_vals)
-        num_data_points = len(self.data)
+    #     lower, upper = self.predictive_intervals(x_vals)
+    #     num_data_points = len(self.data)
+
+    #     plt.figure(figsize=(10, 6))
+    #     plt.plot(x_vals, 10**y_mean, label='Mean Prediction', color='blue')
+    #     plt.fill_between(x_vals, 10**lower, 10**upper, color='lightblue', alpha=0.5, label='Predictive Interval')
+    #     plt.scatter(self.data[self.xvar], self.data[self.yvar], color='black', label=f'Data Points (n={num_data_points})')
+    #     plt.xscale('log')
+    #     plt.yscale('log')
+    #     plt.xlabel(self.xvar)
+    #     plt.ylabel(self.yvar)
+    #     plt.legend()
+    #     plt.title('Posterior Predictive Plot')
+    #     plt.show()
+    
+    def plot_posterior_predictive(self, num_posterior_samples_to_visualize=100, confidence=0.95):
+        log_x_vals = np.linspace(np.log10(self.data[self.xvar].min()), np.log10(self.data[self.xvar].max()), 100)
+        x_vals = 10**log_x_vals  # Convert back to linear scale
+
+        num_posterior_samples = len(self.posterior_samples)
+        posterior_predictive_points = np.zeros((num_posterior_samples, len(x_vals)))
+
+        for i in range(num_posterior_samples):
+            intercept_sample = self.posterior_samples["intercept"].iloc[i]
+            slope_sample = self.posterior_samples["slope"].iloc[i]
+            sigma2_sample = self.posterior_samples["sigma2"].iloc[i]
+
+            noise = np.random.normal(0, np.sqrt(sigma2_sample), len(x_vals))
+            y_pred = intercept_sample + slope_sample * log_x_vals + noise
+            posterior_predictive_points[i] = 10**y_pred
+
+        x_repeated = np.repeat(x_vals, num_posterior_samples)
+        y_pred_flat = posterior_predictive_points.T.flatten()
+
+        mean_intercept = self.posterior_samples["intercept"].mean()
+        mean_slope = self.posterior_samples["slope"].mean()
+        mean_y_pred = mean_intercept + mean_slope * log_x_vals
+
+        lower_percentile = (1 - confidence) / 2 * 100
+        upper_percentile = (1 + confidence) / 2 * 100
+        credible_intervals = np.percentile(posterior_predictive_points, [lower_percentile, upper_percentile], axis=0)
 
         plt.figure(figsize=(10, 6))
-        plt.plot(x_vals, 10**y_mean, label='Mean Prediction', color='blue')
-        plt.fill_between(x_vals, 10**lower, 10**upper, color='lightblue', alpha=0.5, label='Predictive Interval')
-        plt.scatter(self.data[self.xvar], self.data[self.yvar], color='black', label=f'Data Points (n={num_data_points})')
-        plt.xscale('log')
-        plt.yscale('log')
+        plt.scatter(self.data[self.xvar], self.data[self.yvar], color="black", label="Observed Data")
+        plt.scatter(x_repeated, y_pred_flat, color="blue", alpha=0.1, label=f"Posterior Predictive Samples n={len(y_pred_flat)}", s=10)
+        plt.plot(x_vals, 10**mean_y_pred, color="red", label="Mean Posterior Prediction", linewidth=2)
+        plt.fill_between(x_vals, credible_intervals[0], credible_intervals[1], color="black", alpha=0.3, label="Credible Interval")
+        plt.xscale("log")
+        plt.yscale("log")
         plt.xlabel(self.xvar)
         plt.ylabel(self.yvar)
         plt.legend()
-        plt.title('Posterior Predictive Plot')
+        plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.7)
+        plt.tight_layout()
         plt.show()
 
     def plot_percentiles_with_uncertainty(self, x_vals: np.ndarray, percentiles: List[int] = [5, 25, 50, 75, 95]):

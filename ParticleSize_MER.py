@@ -17,6 +17,7 @@ class Predict_ASH_BELOW_63_Micron:
         self.yvar = 'MER_kg/s'
         self._prepare_data()
         self._fit_model()
+        self.posterior_samples_cache = None  # Cache for posterior samples
 
     def set_xvar(self, new_xvar: str):
         """
@@ -74,6 +75,8 @@ class Predict_ASH_BELOW_63_Micron:
         self.X = X
         self.y = y
         self.residuals = residuals
+        # Clear cache after model fit
+        self.posterior_samples_cache = None
 
     def sample_posterior(self, size: int = 10000) -> pd.DataFrame:
         """
@@ -82,12 +85,19 @@ class Predict_ASH_BELOW_63_Micron:
         :param size: Number of posterior samples to draw.
         :return: DataFrame of sampled parameters (intercept, slope, sigma2).
         """
+        if self.posterior_samples_cache is not None and len(self.posterior_samples_cache) == size:
+            return self.posterior_samples_cache
         samples = []
         for _ in range(size):
             sigma2_sample = invgamma.rvs(self.data.shape[0] / 2, scale=self.sigma2 * self.data.shape[0] / 2)
             beta_sample = multivariate_normal.rvs(mean=self.beta, cov=sigma2_sample * np.linalg.inv(self.X.T @ self.X))
             samples.append([*beta_sample, sigma2_sample])
-        return pd.DataFrame(samples, columns=['intercept', 'slope', 'sigma2'])
+        
+        self.posterior_samples_cache = pd.DataFrame(samples, columns=['intercept', 'slope', 'sigma2'])
+        
+        return self.posterior_samples_cache
+        
+        
 
     def predictive_intervals(self, x: np.ndarray, alpha: float = 0.05) -> Tuple[np.ndarray, np.ndarray]:
         """

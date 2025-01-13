@@ -10,10 +10,10 @@ Website: [mahmudm.com](http://mahmudm.com)
 
 # VEI_BulkVolume_Mass Class
 
-The `VEI_BulkVolume_Mass` class provides a robust framework for analyzing and calculating volcanic bulk volumes and masses across various VEI (Volcanic Explosivity Index) levels. By incorporating both deterministic and probabilistic approaches, this class supports advanced Bayesian updates for density estimation and offers visualization and export tools for effective data analysis and reporting.
+The `VEI_BulkVolume_Mass` class provides a robust framework for analyzing and calculating volcanic bulk volumes and masses across various VEI (Volcanic Explosivity Index) levels. By incorporating both empirical and probabilistic approaches, this class supports advanced Bayesian updates for density estimation and offers visualization and export tools for effective data analysis and reporting.
 
 ## Key Features
-- **Comprehensive Volume and Mass Calculations**: Supports deterministic and probabilistic bulk volume estimation with detailed analysis.
+- **Comprehensive Volume and Mass Calculations**: Supports empirical and probabilistic bulk volume estimation with detailed analysis.
 - **Bayesian Density Updating**: Implements Bayesian probability methods to refine density bounds using predefined or user-specified data.
 - **Advanced Visualization**: Creates histograms, KDE plots, boxplots, and percentile bands for detailed data insights.
 - **Export Capabilities**: Facilitates exporting of results to CSV and PDF formats for further analysis and documentation.
@@ -49,12 +49,12 @@ Initializes the class with default or custom parameters.
 
 ### Core Methods
 - **`generate_probabilistic_volumes`**
-  - Generates probabilistic bulk volumes ensuring consistency with the deterministic PDF while maintaining a logarithmic trend with increasing VEI levels.
+  - Generates probabilistic bulk volumes ensuring consistency with the empirical PDF while maintaining a logarithmic trend with increasing VEI levels.
 
 - **`calculate_mass`**
-  - Computes masses for deterministic and probabilistic bulk volumes using density values refined by Bayesian updating.
+  - Computes masses for empirical and probabilistic bulk volumes using density values refined by Bayesian updating.
   - Parameters:
-    - `calculate_deterministic` *(bool)*: Whether to compute deterministic masses.
+    - `calculate_empirical` *(bool)*: Whether to compute empirical masses.
     - `calculate_probabilistic` *(bool)*: Whether to compute probabilistic masses.
 
 - **`calculate_percentile_bands`**
@@ -64,7 +64,7 @@ Initializes the class with default or custom parameters.
   - Produces grouped summary statistics for volumes and masses by VEI levels, including mean, standard deviation, and median values.
 
 - **`visualize_statistics`**
-  - Creates detailed visualizations, including histograms, KDE plots, and boxplots, for deterministic and probabilistic distributions.
+  - Creates detailed visualizations, including histograms, KDE plots, and boxplots, for empirical and probabilistic distributions.
 
 ### Export Methods
 - **`export_volumes_and_masses`**
@@ -141,7 +141,7 @@ pip install pandas numpy matplotlib seaborn scipy tabulate
 Begin by initializing the class with appropriate parameters. The default densities and sample size can be customized.
 
 ### Step 2: Probabilistic Volume Generation
-Use `generate_probabilistic_volumes` to create probabilistic bulk volumes that align with deterministic values while maintaining realistic trends.
+Use `generate_probabilistic_volumes` to create probabilistic bulk volumes that align with empirical values while maintaining realistic trends.
 
 ### Step 3: Mass Calculation
 Calculate masses using `calculate_mass`, leveraging Bayesian updates to refine density estimates.
