@@ -118,11 +118,12 @@ class VEI_BulkVolume_Mass:
             Number of Monte Carlo samples.
         """
         
-        
+        self.probabilistic_volumes_posterior_samples=[]
         self.summary_statistics=pd.DataFrame()
         #####
         self.vei_levels = list(range(9))
         self.bulk_volumes_km3 = [0.0005, 0.005, 0.1, 3, 30, 100, 500, 1000, 2500]
+        #self.bulk_volumes_km3= [0.01, 0.1, 1,10,100,1000, 10000,100000, 1e6 ] #upper limt volumes
         #self.bulk_volumes_km3 = [5e-06, 4e-05, 0.0005, 0.00275, 0.0115, 0.04, 0.1, 0.5, 1.0] # Median Volume for each VEI Level
         self.num_samples = num_samples
         self.use_default_densities = use_default_densities
@@ -198,10 +199,54 @@ class VEI_BulkVolume_Mass:
             return lambda size: np.full(size, np.mean(emperical_volumes))
     #################################################################################
     
-    def generate_probabilistic_volumes(self):
+    # def generate_probabilistic_volumes(self):
+    #     """
+    #     Generate probabilistic bulk volumes ensuring they stay within the defined range for each VEI.
+    #     Assigns the calculated volumes to a DataFrame column 'Probabilistic_Bulk_Volume_m3'.
+    #     """
+    #     print("Generating probabilistic volumes...")
+
+    #     # Validate required attributes
+    #     if not hasattr(self, 'BULK_VOLUME_RANGES') or not hasattr(self, 'data'):
+    #         raise AttributeError("Ensure 'BULK_VOLUME_RANGES' and 'data' are properly initialized.")
+
+    #     if not isinstance(self.data, pd.DataFrame):
+    #         raise TypeError("'data' must be a pandas DataFrame.")
+
+    #     if not hasattr(self, 'num_samples'):
+    #         raise AttributeError("Ensure 'num_samples' is defined.")
+
+    #     # Initialize parameters
+    #     total_samples = self.num_samples
+    #     num_rows = len(self.data)
+    #     samples_per_vei = total_samples // num_rows
+    #     probabilistic_volumes = []
+
+    #     # Generate probabilistic volumes for each VEI
+    #     for idx in range(num_rows):
+    #         min_volume, max_volume = self.BULK_VOLUME_RANGES[idx]
+
+    #         # Sample volumes uniformly within the defined range
+    #         sampled_volumes = np.random.uniform(min_volume, max_volume, samples_per_vei)
+    #         probabilistic_volumes.extend(sampled_volumes)
+
+    #     # Assign sampled volumes to the DataFrame (calculate mean per VEI for simplicity)
+    #     self.data['Probabilistic_Bulk_Volume_m3'] = [
+    #         np.mean(probabilistic_volumes[idx * samples_per_vei:(idx + 1) * samples_per_vei]) * 1e9
+    #         for idx in range(num_rows)
+    #     ]
+
+    #     print("Probabilistic volumes successfully generated.")
+
+    def generate_probabilistic_volumes(self, sampling_method='normal'):
         """
         Generate probabilistic bulk volumes ensuring they stay within the defined range for each VEI.
+        Allows the user to choose the sampling method: 'uniform' or 'normal'.
         Assigns the calculated volumes to a DataFrame column 'Probabilistic_Bulk_Volume_m3'.
+
+        Parameters:
+            sampling_method (str): The method used for sampling ('uniform' or 'normal').
+                                Default is 'uniform'.
         """
         print("Generating probabilistic volumes...")
 
@@ -215,6 +260,9 @@ class VEI_BulkVolume_Mass:
         if not hasattr(self, 'num_samples'):
             raise AttributeError("Ensure 'num_samples' is defined.")
 
+        if sampling_method not in ['uniform', 'normal']:
+            raise ValueError("Invalid sampling method. Choose either 'uniform' or 'normal'.")
+
         # Initialize parameters
         total_samples = self.num_samples
         num_rows = len(self.data)
@@ -225,19 +273,45 @@ class VEI_BulkVolume_Mass:
         for idx in range(num_rows):
             min_volume, max_volume = self.BULK_VOLUME_RANGES[idx]
 
-            # Sample volumes uniformly within the defined range
-            sampled_volumes = np.random.uniform(min_volume, max_volume, samples_per_vei)
-            probabilistic_volumes.extend(sampled_volumes)
+            if sampling_method == 'uniform':
+                # Sample volumes uniformly within the defined range
+                sampled_volumes = np.random.uniform(min_volume, max_volume, samples_per_vei)
 
-        # Assign sampled volumes to the DataFrame (calculate mean per VEI for simplicity)
+            elif sampling_method == 'normal':
+                # Calculate mean and standard deviation for normal distribution
+                mean_volume = (min_volume + max_volume) / 2
+                std_dev_volume = (max_volume - min_volume) / 4  # Assuming 95% values lie within range
+
+                # Sample volumes using normal distribution and clip to range
+                sampled_volumes = np.random.normal(loc=mean_volume, scale=std_dev_volume, size=samples_per_vei)
+                sampled_volumes = np.clip(sampled_volumes, min_volume, max_volume)
+
+            
+             # Ensure sampled volumes align with the predefined bulk_volumes_km3
+            bulk_volume_km3 = self.bulk_volumes_km3[idx]
+            adjustment_factor = bulk_volume_km3 / np.mean(sampled_volumes)
+            sampled_volumes *= adjustment_factor  # Scale the samples to match bulk_volumes_km3
+
+            
+            
+            probabilistic_volumes.extend(sampled_volumes)
+            
+            
+            
+            
+            self.probabilistic_volumes_posterior_samples=[x * 1e9 for x in probabilistic_volumes]
+
+        ##############3
+        
+        #############3
+        # # Assign sampled volumes to the DataFrame (calculate mean per VEI for simplicity)
         self.data['Probabilistic_Bulk_Volume_m3'] = [
             np.mean(probabilistic_volumes[idx * samples_per_vei:(idx + 1) * samples_per_vei]) * 1e9
             for idx in range(num_rows)
         ]
 
-        print("Probabilistic volumes successfully generated.")
+        print(f"Probabilistic volumes successfully generated using {sampling_method} sampling.")
 
-    
     
     # def generate_probabilistic_volumes(self):
     #     """
@@ -664,42 +738,65 @@ class VEI_BulkVolume_Mass:
         grouped.columns = ['_'.join(col).strip() if isinstance(col, tuple) else col for col in grouped.columns]
 
         # Step 5: Print and store the results
-        print("\n### Summary Statistics Grouped by VEI ###")
-        print(tabulate(grouped, headers='keys', tablefmt='grid', showindex=False))
+        # print("\n### Summary Statistics Grouped by VEI ###")
+        # print(tabulate(grouped, headers='keys', tablefmt='grid', showindex=False))
 
         # Save results to the class attribute
         self.summary_statistics = grouped
 
         # Optional: Provide a quick summary for the entire dataset
-        print("\n### Overall Dataset Statistics ###")
-        print(tabulate(self.data.describe(), headers='keys', tablefmt='grid', showindex=True))
+        # print("\n### Overall Dataset Statistics ###")
+        # print(tabulate(self.data.describe(), headers='keys', tablefmt='grid', showindex=True))
 
 
 
+    # def visualize_statistics(self, pdf_pages=None):
+    #     """
+    #     Visualize volumes and masses using histograms, KDE plots, and boxplots with interpretations.
+    #     Optionally save plots to a PDF file if `pdf_pages` is provided.
+    #     """
+    #     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+
+    #     # Plot 1: Histogram for emperical Volumes
+    #     sns.histplot(self.data['emperical_Bulk_Volume_m3'], kde=True, ax=axes[0, 0], bins=20, color="skyblue")
+    #     axes[0, 0].set_title("emperical Bulk Volumes Distribution")
+    #     axes[0, 0].set_yscale('log')  # Set y-axis to log scale
+    #     # Plot 2: Histogram for Probabilistic Volumes (sampled)
+    #     all_probabilistic_volumes = []
+    #     for idx, (min_volume, max_volume) in enumerate(self.BULK_VOLUME_RANGES):
+    #         samples_per_vei = self.num_samples // len(self.BULK_VOLUME_RANGES)
+    #         sampled_volumes = np.random.uniform(min_volume, max_volume, samples_per_vei)
+    #         all_probabilistic_volumes.extend(sampled_volumes)
+
+    #     sns.histplot(all_probabilistic_volumes, kde=True, ax=axes[0, 1], bins=20, color="orange")
+    #     axes[0, 1].set_title("Probabilistic Bulk Volumes Distribution (Sampled)")
+    #     #axes[0, 1].set_xscale('log')  # Set x-axis to log scale
+    #     axes[0, 1].set_yscale('log')  # Set x-axis to log scale
+    #     axes[0,1].set_xlabel('probablistic_Bulk_Volume_m3')
     def visualize_statistics(self, pdf_pages=None):
         """
         Visualize volumes and masses using histograms, KDE plots, and boxplots with interpretations.
         Optionally save plots to a PDF file if `pdf_pages` is provided.
+
+        Parameters:
+            pdf_pages: A PdfPages object to save plots to a PDF file (optional).
         """
+        if 'Probabilistic_Bulk_Volume_m3' not in self.data.columns:
+            raise ValueError("Probabilistic volumes have not been generated. Run 'generate_probabilistic_volumes' first.")
+
         fig, axes = plt.subplots(2, 2, figsize=(14, 12))
 
-        # Plot 1: Histogram for emperical Volumes
+        # Plot 1: Histogram for empirical volumes
         sns.histplot(self.data['emperical_Bulk_Volume_m3'], kde=True, ax=axes[0, 0], bins=20, color="skyblue")
-        axes[0, 0].set_title("emperical Bulk Volumes Distribution")
+        axes[0, 0].set_title("Empirical Bulk Volumes Distribution")
         axes[0, 0].set_yscale('log')  # Set y-axis to log scale
-        # Plot 2: Histogram for Probabilistic Volumes (sampled)
-        all_probabilistic_volumes = []
-        for idx, (min_volume, max_volume) in enumerate(self.BULK_VOLUME_RANGES):
-            samples_per_vei = self.num_samples // len(self.BULK_VOLUME_RANGES)
-            sampled_volumes = np.random.uniform(min_volume, max_volume, samples_per_vei)
-            all_probabilistic_volumes.extend(sampled_volumes)
 
-        sns.histplot(all_probabilistic_volumes, kde=True, ax=axes[0, 1], bins=20, color="orange")
+        # Plot 2: Histogram for probabilistic volumes
+        sns.histplot(self.probabilistic_volumes_posterior_samples, kde=True, ax=axes[0, 1], bins=20, color="orange")
         axes[0, 1].set_title("Probabilistic Bulk Volumes Distribution (Sampled)")
-        #axes[0, 1].set_xscale('log')  # Set x-axis to log scale
-        axes[0, 1].set_yscale('log')  # Set x-axis to log scale
-        axes[0,1].set_xlabel('probablistic_Bulk_Volume_m3')
-
+        axes[0, 1].set_yscale('log')  # Set y-axis to log scale
+        axes[0, 1].set_xlabel('Probabilistic_Bulk_Volume_m3')
+        #######################################################################
         # Plot 3: Boxplot for emperical Mass
         if 'Mean_Mass_emp_kg' in self.data:
             sns.boxplot(data=self.data[['Mean_Mass_emp_kg']], ax=axes[1, 0], color="lightgreen")
