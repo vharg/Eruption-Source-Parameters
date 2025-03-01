@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-18 18:56:22 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/5552?signature=325a01aadd4d532db55335640f383e17684ad9f1c0ff98aa3283e3858f34655f
+================================================================================
+
+Issued              : 20191231/0005Z
+Volcano             : Anak Krakatau (262000)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Anak Krakatau Volcano Observatory
+Notice Number       : 2019KRA202
+Volcano Location    : S 06 deg 06 min 07 sec E 105 deg 25 min 23 sec
+Area                : Lampung
+Summit Elevation    : 157 FT (49 M)
+Volcanic Activity Summary: Eruption  with ash clouds at 23:51 UTC (06:51 local time).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 12217 FT (3702 M) above sea level, may be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Thick gray-black volcanic ash from the top of the crater. Ash-cloud moving to south.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 41 mm and duration 93 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -6.101944444444444
+Longitude           : 105.42305555555556
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

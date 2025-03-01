@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-18 18:56:20 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/7693?signature=33b55c9bf681b2dd729ea606806d6ffc39b8a3e58285e4ae3dafa46d2af39d6f
+================================================================================
+
+Issued              : 20231205/1456Z
+Volcano             : Anak Krakatau (262000)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Anak Krakatau Volcano Observatory
+Notice Number       : 2023KRA119
+Volcano Location    : S 06 deg 06 min 07 sec E 105 deg 25 min 23 sec
+Area                : Lampung, Indonesia
+Summit Elevation    : 502 FT (157 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 1456 UTC (2156 local).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 5302 FT (1657 M) above sea level or 4800 FT (1500 M) above summit. May be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash cloud moving to northwest. Volcanic ash is observed to be dark. The intensity of volcanic ash is observed to be thick.
+Remarks             : Eruption and ash emission is continuing. Generated from Volcanic Eruption Notice (VEN)
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -6.101944444444444
+Longitude           : 105.42305555555556
+AshCloudHeight_ASL  : 1657
+AshCloudHeight_AGL  : 1500
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

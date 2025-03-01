@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-18 18:56:23 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/3820?signature=4a82d11d589dcb22e9f05513a016fabf3777fdf6b85d87d5060d66a4918e8a3d
+================================================================================
+
+Issued              : 20190610/0300Z
+Volcano             : Anak Krakatau (262000)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Anak Krakatau Volcano Observatory
+Notice Number       : 2019KRA114
+Volcano Location    : S 06 deg 06 min 07 sec E 105 deg 25 min 23 sec
+Area                : Lampung
+Summit Elevation    : 157 FT (49 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 0150 UTC (0850 local).
+Volcanic Cloud Height: Volcanic ash is not visible/observed.
+Other Volcanic Cloud Information: Anak Krakatau volcano is not clear.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 9 mm and duration 61 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -6.101944444444444
+Longitude           : 105.42305555555556
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

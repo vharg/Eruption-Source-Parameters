@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-18 18:56:22 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/3992?signature=643f02e91b569bad5156f7705ac01748877b79e9821af4928144c85a0073910d
+================================================================================
+
+Issued              : 20160620/0449Z
+Volcano             : Anak Krakatau (262000)
+Current Aviation Colour Code: YELLOW
+Previous Aviation Colour Code: unassigned
+Source              : Anak Krakatau Volcano Observatory
+Notice Number       : 2016KRA01
+Volcano Location    : S 06 deg 06 min 07 sec E 105 deg 25 min 23 sec
+Area                : Lampung
+Summit Elevation    : 157 FT (49 M)
+Volcanic Activity Summary: Seismograph at Anak Krakatau Volcano Observatory detected an eruption occurred at 05:51 Local Time or 22:51 UTC, but the eruption was not observed visually from the observatory because of cloudy weather.  The seismicity increased before the eruption, preceded by a swarm of volcanic earthquakes about 1 day before and significantly increased 3 hours before the eruption. After the eruption, seismic activity decreases gradually.
+Volcanic Cloud Height: Volcanic ash is not visible/observed.
+Other Volcanic Cloud Information: -
+Remarks             : Seismicity is dominated by shallow volcanic earthquakes. however deep volcanic and local tectonic earthquakes are often recorded.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -6.101944444444444
+Longitude           : 105.42305555555556
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

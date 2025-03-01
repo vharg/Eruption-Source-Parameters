@@ -1,0 +1,36 @@
+Name,Volcano,Latitude,Longitude,Climate zone,Date of onset,Magma type,VEI,Height lower bound (km a.v.l.),Height upper bound (km a.v.l.),Plume height (km a.v.l.),Height method,Volume lower bound (km^3),Volume upper bound (km^3),Volume (km^3),MER lower bound (kg/s),MER upper bound (kg/s),MER (kg/s),Duration lower bound (hours),Duration upper bound (hours),Duration (hours)
+"St. Helens, March 2005",St. Helens,46.2,-122.18,Temperate,3/8/2005,dacite,2,,,9.6,visual,,,0.0001,,,4.00E+05,,,0.5
+"St. Helens, July 1980",St. Helens,46.2,-122.18,Temperate,7/22/1980,dacite,2,,,10.3,radar,,,0.001,,,1.40E+06,,,0.45
+"St. Helens, 25 May 1980",St. Helens,46.2,-122.18,Temperate,5/25/1980,dacite,3,,,10.2,radar,,,0.016,,,2.00E+07,0.00,0.50,0.5
+St. Helens,St. Helens,46.2,-122.18,Temperate,6/12/1980,dacite,3,,,9.6,radar,,,0.017,,,2.00E+07,,,0.5
+"Pinatubo, Philippines, 12 June 1991",Pinatubo,15.13,120.35,Tropical,6/12/1991,dacite,3,,,17.5,radar,,,0.0056,,,6.00E+06,,,0.63
+"Ruapehu, NZ",Ruapehu,-39.28,175.57,Subtropics,6/17/1996,andesite,3,,,5.7,satellite,,,0.002,,,2.00E+05,,,6.5
+"Redoubt, USA",Redoubt,60.485,-152.742,Cold,12/15/1989,andesite,3,,,9,visual,,,0.008,4.00E+06,7.00E+06,5.50E+06,,,1.03
+"Nevado del Ruiz, Colombia",Nevado del Ruiz,4.892,-75.324,Tropical,11/13/1985,"andesite, dacite",3,,,26,isopleth,,,0.014,,,3.00E+07,,,0.3
+"Spurr, USA, June 1992",Spurr,61.299,-152.251,Cold,6/27/1992,andesite,3,,,11.3,radar,,,0.012,,,2.00E+06,,,4.4
+"Spurr, USA, August 1992",Spurr,61.299,-152.251,Cold,8/18/1992,andesite,3,,,10.5,radar,,,0.014,,,3.00E+06,,,3.5
+"Spurr, USA, September 1992",Spurr,61.299,-152.251,Cold,9/17/1992,andesite,3,,,10.7,radar,,,0.015,,,3.00E+06,,,3.6
+"Hekla, 1970",Hekla,63.983,-19.666,Cold,5/5/1970,andesite,3,12,16,14,visual,,,0.017,,,6.00E+06,,,2
+"Hekla, 1980",Hekla,63.983,-19.666,Cold,8/17/1980,andesite,3,,,15,visual,,,0.019,,,2.00E+06,,,5
+"Reventador, Ecuador",Reventador,-0.077,-77.656,Tropical,11/3/2002,andesite,4,,,17,visual,,,0.12,,,1.00E+07,,,22
+"Hekla, 1947 brownish-gray ash",Hekla,63.983,-19.666,Cold,3/29/1947,andesite,4,,,28,visual,,,0.034,,,4.60E+07,,,0.5
+"Hekla, 1947 brownish-black ash",Hekla,63.983,-19.666,Cold,3/29/1947,andesite,4,8,25,16.5,visual,,,0.013,,,1.60E+07,,,0.5
+"Soufrière, St. Vincent",Soufrière St. Vincent,13.33,-61.18,Tropical,5/7/1902,"andesite, dacite",4,,,14,visual,,,0.14,3.00E+07,4.00E+07,3.50E+07,2.50,3.50,3
+"El Chichón A, Mexico, March 1982",El Chichón,17.36,-93.228,Tropical,3/29/1982,andesite,5,,,20,isopleth,,,0.3,,,3.50E+07,,,5
+"El Chichón B, Mexico, April 1982",El Chichón,17.36,-93.228,Tropical,4/4/1982 0135 GMT,andesite,5,,,24,isopleth,,,0.39,,,6.00E+07,,,4
+"El Chichón C, Mexico, March 1982",El Chichón,17.36,-93.228,Tropical,4/4/1982 1122 GMT,andesite,5,,,22,isopleth,,,0.4,,,4.00E+07,,,7
+"Hudson, Chile","Hudson, Chile",-45.9,-72.97,Temperate,8/12/1991,andesite,5,12,18,14,visual,,,3,,,7.00E+07,,,31
+"St. Helens, 18 May 1980",St. Helens,46.2,-122.18,Temperate,5/18/1980,dacite,5,,,13.5,radar,,,0.2,,,2.00E+07,,,9
+"Quizapu, Chile",Quizapu,-35.653,-70.761,Subtropics,4/10/1932,dacite,6,27,30,28.5,isopleth,,,4,,,1.50E+08,,,18
+Novarupta Episode I,Novarupta,58.27,-155.157,Temperate,6/6/1912,"rhyolite,dacite,(andesite)",6,,,23.5,isopleth,,,2.94,,,1.20E+08,,,16
+Novarupta Episode II,Novarupta,58.27,-155.157,Temperate,6/6/1912,dacite,6,,,22.5,isopleth,,,1.96,,,5.20E+07,,,26
+Novarupta Episode III,Novarupta,58.27,-155.157,Temperate,6/6/1912,"dacite,(andesite)",6,,,19,isopleth,,,1.63,,,1.10E+08,,,10
+"Pinatubo, Philippines, 15 June 1991",Pinatubo,15.13,120.35,Tropical,6/15/1991,dacite,6,35,40,37.5,satellite,0.8,1.6,1.2,2.00E+08,4.00E+08,3.00E+08,,,3
+"Santa Maria, Guatemala",Santa Maria,14.757,-91.552,Tropical,10/24/1902,"andesite,(dacite)",6,,,34,isopleth,,,3.3,5.00E+07,7.00E+07,6.00E+07,24.00,36.00,30
+"Etna, 2001",Etna,37.748,14.999,Subtropics,7/19/2001,basaltic,2,0.5,2.5,1.5,visual,,,0.0009,,,6.00E+03,,,115
+"Cerro Negro, 1995",Cerro Negro,12.506,-86.702,Tropical,11/19/1995,basaltic,2,2,2.5,2.25,visual,,,0.0013,,,9.40E+03,,,100
+"Cerro Negro, 1992",Cerro Negro,12.506,-86.702,Tropical,4/9/1992,basaltic,3,2.8,6.8,4.8,visual,,,0.0094,,,3.00E+05,,,21
+Izu–Oshima,Izu–Oshima,34.724,139.394,Subtropics,11/21/1986,"basaltic,andesite,(andesite)",3,,,10,"satellite, radar, visual",,,0.0045,,,8.00E+05,,,3
+"Fuego, 1971",Fuego,14.473,90.88,Tropical,9/14/1971,basaltic,3,,,10,visual,,,0.03,,,1.70E+06,,,12
+"Miyakejima, Japan",Miyakejima,34.094,139.526,Subtropics,8/18/2000,basaltic,3,,,15.5,radar,,,0.0042,,,1.20E+06,,,3.4
+"Fuego, 1974",Fuego,14.473,90.88,Tropical,10/14/1974,basaltic,4,,,10,visual,,,0.02,,,3.00E+06,,,5

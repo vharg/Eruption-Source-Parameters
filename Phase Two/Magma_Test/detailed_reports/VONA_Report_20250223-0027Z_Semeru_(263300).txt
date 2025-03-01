@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-22 23:37:11 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/15144?signature=e664beeb6dd9d0fbeae687c57f8bca2d3151b650120a559486f8bc56c34df9ab
+================================================================================
+
+Issued              : 20250223/0027Z
+Volcano             : Semeru (263300)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Semeru Volcano Observatory
+Notice Number       : 2025SMR914
+Volcano Location    : S 08 deg 06 min 29 sec E 112 deg 55 min 12 sec
+Area                : East java, Indonesia
+Summit Elevation    : 11763 FT (3676 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 0027 UTC (0727 local).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 14643 FT (4576 M) above sea level or 2880 FT (900 M) above summit. May be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash cloud moving to southwest. Volcanic ash is observed to be gray. The intensity of volcanic ash is observed to be thick.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 22 mm and maximum duration 114 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.108055555555556
+Longitude           : 112.92
+AshCloudHeight_ASL  : 4576
+AshCloudHeight_AGL  : 900
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

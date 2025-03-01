@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-02-18 18:56:22 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/6176?signature=b44478d5daf047ce7b0b819b9658cc971d2826080664305896dd1948e042922d
+================================================================================
+
+Issued              : 20220203/0914Z
+Volcano             : Anak Krakatau (262000)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: unassigned
+Source              : Anak Krakatau Volcano Observatory
+Notice Number       : 2022KRA01
+Volcano Location    : S 06 deg 06 min 07 sec E 105 deg 25 min 23 sec
+Area                : Lampung, Indonesia
+Summit Elevation    : 502 FT (157 M)
+Volcanic Activity Summary: volcanic ash cloud at 0915 UTC (1615 local).Gas emission with possible volcanic ash content. Visuals directly from the cctv it is observed that thick gray smoke is blowing with a height of 200m from  the top of the volcano, the wind direction slowly to the northeast.
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 1142 FT (357 M) above sea level, may be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash-cloud moving to northeast.
+Remarks             : Seismic activity is characterized by continuous volcanic tremor.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -6.101944444444444
+Longitude           : 105.42305555555556
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================
