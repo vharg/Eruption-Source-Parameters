@@ -222,3 +222,220 @@ def VONA_Message(VONA_Source="TOKYO"):
 #VONA_reports, VONA_latest_data, volcano_name, latitude, longitude, AshCloudHeight_AGL, vei_range=VONA_Message(VONA_Source="TOKYO")
 
 
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+import matplotlib.gridspec as gridspec
+
+class PlumeHeightAnalyzer_FromInfrasound:
+    def __init__(self, folder_path):
+        """
+       
+        A class to analyze plume height datasets stored in text files within a specified folder.
+        It calculates mean values for two categories ('Mono' and 'DI') and visualizes the data.
+
+        Attributes:
+            folder_path (str): The directory containing text files with plume height data.
+            datasets (list): A list of NumPy arrays, each representing a dataset.
+            valid_file_paths (list): A list of file paths corresponding to valid datasets.
+            dataset_prefixes (set): A set of unique dataset prefixes derived from filenames.
+            mean_values (dict): A dictionary storing computed mean values for 'Mono' and 'DI' categories.
+
+        Methods:
+            load_datasets(): Loads valid .txt files from the folder and stores them as NumPy arrays.
+            calculate_mean_values(): Computes and stores mean values for 'Mono' and 'DI' datasets.
+            get_mono_means(): Returns a dictionary of Mono mean values for all datasets.
+            get_di_means(): Returns a dictionary of DI mean values for all datasets.
+            get_mono_mean(dataset_name): Returns the Mono mean values for a specific dataset.
+            get_di_mean(dataset_name): Returns the DI mean values for a specific dataset.
+            visualize_datasets(): Generates scatter plots with median trend lines for all datasets.
+    
+        """
+        self.folder_path = folder_path
+        self.datasets = []
+        self.valid_file_paths = []
+        self.dataset_prefixes = set()
+        self.mean_values = {}
+
+        # Load datasets
+        self.load_datasets()
+        self.calculate_mean_values()
+
+    def load_datasets(self):
+        """
+        Loads all valid .txt datasets from the specified folder.
+        """
+        file_paths = [os.path.join(self.folder_path, file) for file in os.listdir(self.folder_path) if file.endswith(".txt")]
+
+        for file in file_paths:
+            try:
+                data = np.loadtxt(file)
+                if data.size > 0:
+                    self.datasets.append(data)
+                    self.valid_file_paths.append(file)
+            except Exception as e:
+                print(f"Error loading {file}: {e}")
+
+        if not self.datasets:
+            print("No valid datasets found. Please check the folder path and file contents.")
+
+        # Extract unique dataset prefixes
+        self.dataset_prefixes = set(os.path.splitext(file)[0].split("_")[0] for file in os.listdir(self.folder_path) if file.endswith(".txt"))
+
+    def calculate_mean_values(self):
+        """
+        Calculates and stores mean values separately for 'Mono' and 'DI' datasets.
+        """
+        mean_values = {}
+
+        for dataset_prefix in sorted(self.dataset_prefixes):
+            dataset_files = [file for file in self.valid_file_paths if os.path.basename(file).startswith(dataset_prefix)]
+            dataset_data = [data for file, data in zip(self.valid_file_paths, self.datasets) if os.path.basename(file).startswith(dataset_prefix)]
+            
+            mono_means = []
+            di_means = []
+
+            for file_path, data in zip(dataset_files, dataset_data):
+                if data.size > 0:  # Ensure dataset is not empty
+                    file_name = os.path.basename(file_path)
+                    if 'di' in file_name.lower():
+                        di_means.append(np.mean(data))
+                    else:
+                        mono_means.append(np.mean(data))
+
+            mean_values[dataset_prefix] = {
+                "Mono": mono_means,
+                "DI": di_means
+            }
+
+        self.mean_values = mean_values  # Store computed means for later use
+
+    def get_mono_means(self):
+        """
+        Returns a dictionary where keys are dataset names, and values are lists of Mono means.
+        """
+        return {key: value["Mono"] for key, value in self.mean_values.items()}
+
+    def get_di_means(self):
+        """
+        Returns a dictionary where keys are dataset names, and values are lists of DI means.
+        """
+        return {key: value["DI"] for key, value in self.mean_values.items()}
+
+    def get_mono_mean(self, dataset_name):
+        """
+        Returns the Mono means for a specific dataset.
+        """
+        if dataset_name in self.mean_values:
+            return self.mean_values[dataset_name]["Mono"]
+        else:
+            print(f"Dataset '{dataset_name}' not found.")
+            return None
+
+    def get_di_mean(self, dataset_name):
+        """
+        Returns the DI means for a specific dataset.
+        """
+        if dataset_name in self.mean_values:
+            return self.mean_values[dataset_name]["DI"]
+        else:
+            print(f"Dataset '{dataset_name}' not found.")
+            return None
+
+    def visualize_datasets(self):
+        """
+        Generates scatter plots and median trend lines for the datasets.
+        """
+        if not self.datasets:
+            print("No datasets to visualize.")
+            return
+
+        num_datasets = len(self.dataset_prefixes)
+
+        fig = plt.figure(figsize=(14, 6 * num_datasets))
+        gs = gridspec.GridSpec(num_datasets, 1, figure=fig, hspace=0.4)
+
+        # Define colormap
+        cmap = cm.coolwarm
+        norm = mcolors.Normalize(
+            vmin=min(np.min(np.median(data, axis=0)) for data in self.datasets),
+            vmax=max(np.max(np.median(data, axis=0)) for data in self.datasets)
+        )
+
+        # Process each dataset separately
+        for idx, dataset_prefix in enumerate(sorted(self.dataset_prefixes)):
+            ax = fig.add_subplot(gs[idx]) if num_datasets > 1 else plt.gca()
+
+            dataset_files = [file for file in self.valid_file_paths if os.path.basename(file).startswith(dataset_prefix)]
+            dataset_data = [data for file, data in zip(self.valid_file_paths, self.datasets) if os.path.basename(file).startswith(dataset_prefix)]
+
+            for file_path, data in zip(dataset_files, dataset_data):
+                file_name = os.path.basename(file_path)
+                
+                linestyle = 'dashed' if 'di' in file_name.lower() else 'solid'
+
+                # Compute medians
+                medians = np.median(data, axis=0)
+
+                # Normalize transparency
+                median_min, median_max = np.min(medians), np.max(medians)
+                normalized_alphas = (medians - median_min) / (median_max - median_min + 1e-6) * 0.7 + 0.3
+
+                # Plot scatter points with color based on colormap
+                scatter_colors = cmap(norm(data.flatten()))
+                ax.scatter(
+                    np.tile(np.arange(data.shape[1]), data.shape[0]),
+                    data.flatten(),
+                    color=scatter_colors,
+                    s=2,
+                    alpha=0.4
+                )
+
+                # Plot median line with color mapping
+                for i in range(len(medians) - 1):
+                    color = cmap(norm(medians[i]))
+                    ax.plot([i, i + 1], [medians[i], medians[i + 1]], color=color, alpha=normalized_alphas[i], linestyle=linestyle, linewidth=2)
+
+            ax.set_xlabel("Column Index", fontsize=12)
+            ax.set_ylabel("Plume Heights", fontsize=12)
+            ax.set_title(f"Scatter Plot for {dataset_prefix} Data 1000 run on 1-15% mass load", fontsize=14)
+            ax.grid(True, linestyle='--', alpha=0.6)
+
+            # Add legend for DI and Mono
+            ax.plot([], [], color='black', linestyle='dashed', label="DI")
+            ax.plot([], [], color='black', linestyle='solid', label="Mono")
+            ax.legend(loc="upper right", fontsize=10, frameon=True)
+
+        # Add colorbar
+        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+        cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax)
+        cbar.set_label("Median Value", fontsize=12)
+
+        # Show plot
+        plt.show()
+
+
+
+# # Example usage:
+# analyzer = PlumeHeightAnalyzer_FromInfrasound("./allPlumeHeights/")
+# dataset_name = "sparks"  # Change this to an actual dataset name in your folder
+
+# mono_mean = analyzer.get_mono_mean(dataset_name)
+# di_mean = analyzer.get_di_mean(dataset_name)
+
+# print(f"Mono Mean for {dataset_name}: {mono_mean}")
+# print(f"DI Mean for {dataset_name}: {di_mean}")
+
+# analyzer.visualize_datasets()
+
+# combined=mono_mean + di_mean
+
+# # Round numbers to two decimal places and remove duplicates
+# combined = list(set(int(round(num)) for num in combined))
+
+# # Sort the result (optional)
+# combined.sort()
+
+# print(f"Combined Mono and di mean Plume Heights: {combined}")
