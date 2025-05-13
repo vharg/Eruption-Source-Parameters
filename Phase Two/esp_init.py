@@ -281,3 +281,4 @@ def ESP_INIT(vei_levels=None, PlumeHeight=None, show_plots=False):
         psize_predictions.to_csv(os.path.join(folder_name, "Particle_Size_results.csv"), index=False)
 
     print(f"Results saved in folder: {folder_name}")
+    return heights

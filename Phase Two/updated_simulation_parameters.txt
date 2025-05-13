@@ -1,0 +1,13 @@
+simulationStartDatetime 20200112_0500
+simulationDurationInHour 168
+volcanoName Semeru__263300
+volcanoX 112.92
+volcanoY -8.108055555555556
+summitHeightInMetre 11763
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+emissionSourceParameterSet 15000_14_13_2020_01_12_06_57
