@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-05-14 12:47:11 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/16866?signature=2751a48788d971b68ec0d59bf38852741aa43cffa0e4b7e9ef771b7f68f1908e
+================================================================================
+
+Issued              : 20250514/0025Z
+Volcano             : Ibu (268030)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Ibu Volcano Observatory
+Notice Number       : 2025IBU759
+Volcano Location    : N 01 deg 29 min 17 sec E 127 deg 37 min 48 sec
+Area                : North Maluku, Indonesia
+Summit Elevation    : 4240 FT (1325 M)
+Volcanic Activity Summary: Eruption at 0025 UTC (0925 local).
+Volcanic Cloud Height: Ash-cloud is not observed.
+Other Volcanic Cloud Information: Ash-cloud is not observed.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 28 mm and maximum duration 54 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : 1.4880555555555557
+Longitude           : 127.63
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

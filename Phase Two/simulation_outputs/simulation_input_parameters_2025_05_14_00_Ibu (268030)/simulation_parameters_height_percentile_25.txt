@@ -1,0 +1,13 @@
+simulationStartDatetime 20250514_0025
+simulationDurationInHour 168
+volcanoName Ibu__268030
+volcanoX 127.63
+volcanoY 1.4880555555555557
+summitHeightInMetre 1325
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+emissionSourceParameterSet 6210_2_58_2025_05_14_00_25

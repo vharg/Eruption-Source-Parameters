@@ -67,6 +67,8 @@ def ESP_INIT(vei_levels=None, PlumeHeight=None, show_plots=False):
     import vei
     from vei import analyze_correlations
     from predictor_generic import BAYESIAN_PREDICTOR
+    
+    heights = None  # Initialize it at the top
 
     # Load data
     data_loader = vei.LOADDATA()

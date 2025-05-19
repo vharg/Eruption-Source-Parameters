@@ -164,6 +164,8 @@ class SimulationParameterGenerator:
         # Parse the Issued datetime and use it to define simulation start time
         self.issue_datetime = datetime.strptime(entry["Issued"], "%Y%m%d/%H%MZ")
         simulation_start = self.issue_datetime.strftime("%Y%m%d_%H%M")
+        
+        self.volcano_name=entry["Volcano"]
 
         # Extract summit height in meters using regex
         summit_height_match = re.search(r'\((\d+)\s*M\)', entry["Summit Elevation"])
@@ -188,38 +190,85 @@ class SimulationParameterGenerator:
         # Update output directory using datetime suffix
         self.output_dir = self.generate_output_folder(self.output_dir, self.issue_datetime, entry["Volcano"])
 
+    # def generate_simulation_files(self):
+    #     """
+    #     Creates simulation parameter files for plume height/duration percentiles.
+
+    #     Returns:
+    #     - List[str]: Paths to the created simulation parameter files.
+    #     """
+    #     os.makedirs(self.output_dir, exist_ok=True)
+
+    #     percentiles = [5, 25, 50, 75, 95]
+    #     file_paths = []
+
+    #     for p in percentiles:
+    #         height_col = f"Height_km.a.v.l_Percentile_{p}"
+    #         duration_col = f"Duration_hr_P{p}"
+
+    #         height_m = int(round(self.plume_df[height_col].iloc[0] * 1000))
+    #         duration_hr = self.plume_df[duration_col].iloc[0]
+    #         duration_hr_int = int(duration_hr)
+    #         duration_min_int = int(round((duration_hr - duration_hr_int) * 60))
+
+    #         emission_str = f"{height_m}_{duration_hr_int}_{duration_min_int}_{self.issue_datetime.strftime('%Y_%m_%d_%H_%M')}"
+    #         self.base_params["emissionSourceParameterSet"] = emission_str
+
+    #         output_file = os.path.join(self.output_dir, f"simulation_parameters_height_percentile_{p}.txt")
+    #         with open(output_file, "w") as f:
+    #             for key, value in self.base_params.items():
+    #                 f.write(f"{key} {value}\n")
+
+    #         file_paths.append(output_file)
+
+    #     return file_paths
+    
     def generate_simulation_files(self):
         """
-        Creates simulation parameter files for plume height/duration percentiles.
+        Creates simulation parameter files for each row in the plume data,
+        storing output in a subfolder named by VEI value.
 
         Returns:
-        - List[str]: Paths to the created simulation parameter files.
+        - List[str]: Paths to all created simulation parameter files.
         """
         os.makedirs(self.output_dir, exist_ok=True)
+        all_generated_paths = []
 
         percentiles = [5, 25, 50, 75, 95]
-        file_paths = []
 
-        for p in percentiles:
-            height_col = f"Height_km.a.v.l_Percentile_{p}"
-            duration_col = f"Duration_hr_P{p}"
+        for idx, row in self.plume_df.iterrows():
+            if "VEI" not in row or pd.isna(row["VEI"]):
+                continue
 
-            height_m = int(round(self.plume_df[height_col].iloc[0] * 1000))
-            duration_hr = self.plume_df[duration_col].iloc[0]
-            duration_hr_int = int(duration_hr)
-            duration_min_int = int(round((duration_hr - duration_hr_int) * 60))
+            vei = int(row["VEI"])
+            vei_subfolder = os.path.join(self.output_dir, f"VEI_{vei}")
+            os.makedirs(vei_subfolder, exist_ok=True)
 
-            emission_str = f"{height_m}_{duration_hr_int}_{duration_min_int}_{self.issue_datetime.strftime('%Y_%m_%d_%H_%M')}"
-            self.base_params["emissionSourceParameterSet"] = emission_str
+            for p in percentiles:
+                height_col = f"Height_km.a.v.l_Percentile_{p}"
+                duration_col = f"Duration_hr_P{p}"
 
-            output_file = os.path.join(self.output_dir, f"simulation_parameters_height_percentile_{p}.txt")
-            with open(output_file, "w") as f:
-                for key, value in self.base_params.items():
-                    f.write(f"{key} {value}\n")
+                if pd.isna(row.get(height_col)) or pd.isna(row.get(duration_col)):
+                    continue
 
-            file_paths.append(output_file)
+                height_km = row[height_col]
+                duration_hr = row[duration_col]
 
-        return file_paths
+                height_m = int(round(height_km * 1000))
+                duration_hr_int = int(duration_hr)
+                duration_min_int = int(round((duration_hr - duration_hr_int) * 60))
+
+                emission_str = f"{height_m}_{duration_hr_int}_{duration_min_int}_{self.issue_datetime.strftime('%Y_%m_%d_%H_%M')}"
+                self.base_params["emissionSourceParameterSet"] = emission_str
+
+                output_file = os.path.join(vei_subfolder, f"simulation_parameters_VEI_{vei}_P{p}_{self.volcano_name}.txt")
+                with open(output_file, "w") as f:
+                    for key, value in self.base_params.items():
+                        f.write(f"{key} {value}\n")
+
+                all_generated_paths.append(output_file)
+
+        return all_generated_paths
 
     def run(self):
         """Executes the full simulation parameter generation workflow."""

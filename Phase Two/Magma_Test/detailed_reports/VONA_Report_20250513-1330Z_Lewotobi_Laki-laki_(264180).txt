@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-05-13 18:08:58 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/16856?signature=d0b94e5d735ae810f2f9ae4b85ec381cbf24449dddf65b3a9bbee4b57e21e950
+================================================================================
+
+Issued              : 20250513/1330Z
+Volcano             : Lewotobi Laki-laki (264180)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Lewotobi Laki-laki Volcano Observatory
+Notice Number       : 2025LWK311
+Volcano Location    : S 08 deg 32 min 20 sec E 122 deg 46 min 06 sec
+Area                : East Nusa Tenggara, Indonesia
+Summit Elevation    : 5069 FT (1584 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 1330 UTC (2130 local).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 7629 FT (2384 M) above sea level or 2560 FT (800 M) above summit. May be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash cloud moving to northwest. Volcanic ash is observed to be gray. The intensity of volcanic ash is observed to be thin.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 5.1 mm and maximum duration 49 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.53888888888889
+Longitude           : 122.76833333333333
+AshCloudHeight_ASL  : 2384
+AshCloudHeight_AGL  : 800
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================
