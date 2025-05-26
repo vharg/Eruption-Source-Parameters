@@ -285,19 +285,19 @@ log_link = pn.widgets.FileDownload(
     filename="app_errors.log", button_type="warning"
 )
 
-threshold_slider_3d = pn.widgets.FloatSlider(name='3D Threshold', start=0.0, end=1.0, step=0.05, value=0.1)
+threshold_slider_3d = pn.widgets.FloatSlider(name='3D Threshold', start=0.0, end=1.0, step=0.05, value=0.1, format='0.0000')
 fps_slider_3d = pn.widgets.IntSlider(name='3D FPS', start=1, end=10, value=2)
 Altitude_slider = pn.widgets.IntSlider(name='Define Ash Altitude', start=0, end=15, value=4)
 
-threshold_slider_2d = pn.widgets.FloatSlider(name='2D Threshold', start=0.0, end=1.0, step=0.01, value=0.005)
+threshold_slider_2d = pn.widgets.FloatSlider(name='2D Threshold', start=0.0, end=1.0, step=0.01, value=0.005, format='0.0000')
 fps_slider_2d = pn.widgets.IntSlider(name='2D FPS', start=1, end=10, value=2)
 
 
 # Exceedance controls
-exceedance_threshold_3d = pn.widgets.FloatSlider(name='3D Exceedance Threshold', start=0.001, end=1, step=0.001, value=0.008)
+exceedance_threshold_3d = pn.widgets.FloatSlider(name='3D Exceedance Threshold', start=0, end=1, step=0.00001, value=0.008, format='0.0000')
 exceedance_cmap_3d = pn.widgets.Select(name='3D Exceedance Colormap', options=["viridis", "plasma", "rainbow"])
 
-exceedance_threshold_2d = pn.widgets.FloatSlider(name='2D Exceedance Threshold', start=0.0001, end=1, step=0.0001, value=0.001)
+exceedance_threshold_2d = pn.widgets.FloatSlider(name='2D Exceedance Threshold', start=0, end=1, step=0.00001, value=0.001, format='0.0000')
 exceedance_cmap_2d = pn.widgets.Select(name='2D Exceedance Colormap', options=["viridis", "plasma", "rainbow"])
 
 
@@ -368,7 +368,7 @@ def process_zip(event=None):
 def reset_app(event=None):
     animator_obj.clear()
     file_input.value = None
-    status.object = "🔄 App has been reset."
+    #status.object = "🔄 App has been reset."
     
     for folder in ["ash_output", "2D", "3D", "Exceedance_3D", "Exceedance_2D"]:
         shutil.rmtree(os.path.join(MEDIA_DIR, folder), ignore_errors=True)
@@ -377,6 +377,22 @@ def reset_app(event=None):
     
     #restore_previous_session()
     update_media_tabs()
+    
+    status.object = (""" 🔄 App has been reset: 
+    ### 📌 Getting Started with NAME Model Output Simulation Visualization
+
+    #### ✅ Instructions:
+
+    - 🗂️ **Step 1 (Optional)**: Upload your own NAME Model Simulation output in `.ZIP` format  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If no file is uploaded, default data from **Taal Volcano** will be used.
+
+    - ▶️ **Step 2 (Required)**: Click **`Process Zip`**  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will process either your uploaded file or the default dataset.
+
+    - 📥 **Step 3 (Optional)**: Click **`Download Plots and Data`** to export a sample `.ZIP` structure and results from the **Taal Volcano** simulation.
+
+    ---
+    """)
 
 
 

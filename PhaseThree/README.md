@@ -55,7 +55,7 @@ An interactive dashboard for uploading, processing, analyzing, and visualizing v
 
 1. Launch the dashboard:
    ```bash
-   panel serve app.py --show
+   panel serve app.py --autoreload --show                                                                                    
    ```
 2. Upload a NAME ZIP file.
 3. Use the 2D/3D tabs to customize and generate visualizations.
