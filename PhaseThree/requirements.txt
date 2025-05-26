@@ -1,0 +1,15 @@
+panel
+dask
+xarray
+numpy
+matplotlib
+netCDF4
+pillow
+scipy
+cartopy
+contextily
+geopy
+adjustText
+#basemap-data-hires
+imageio
+basemap
