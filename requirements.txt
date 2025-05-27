@@ -1,0 +1,21 @@
+# Phase One - VEI sampling and scraping
+numpy
+pandas
+matplotlib
+geopandas
+bs4
+requests
+
+# Phase Two - Real-time VONA and ESP parsing
+tqdm
+gdal
+beautifulsoup4
+lxml
+
+# Phase Three - NAME output processing and visualization
+panel
+xarray
+netCDF4
+cartopy
+matplotlib
+dask

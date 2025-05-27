@@ -1,90 +1,179 @@
+# 🌋 Eruption Source Parameter Estimation and Ash Dispersion Analysis
 
-# Project README
+This GitHub repository contains all scripts and tools developed as part of the OSTIn initiative led by Prof. Susanna Jenkins. The suite is designed to support real-time forecasting and analysis of volcanic ash hazards using a combination of eruption source parameter sampling, VONA report parsing, satellite/infrasound analysis, and visualization of NAME model outputs.
 
-## Project Overview
-This project focuses on developing a probabilistic framework for defining eruption source parameters critical for volcanic ash hazard assessment. The methodology integrates various datasets, statistical models, and Python scripts to address key challenges in volcanic monitoring, particularly during the early stages of an eruption.
+---
 
-### Key Objectives
-1. **Define Probability Density Functions (PDFs):** 
-   - PDFs describe inputs required by the NAME model at different stages:
-     - **First VONA:** Only location and time are known.
-     - **Infrasound data:** Plume height range and duration are also known.
-     - **Satellite data:** Provides refined details.
-2. **Stochastic Parameter Sampling:** 
-   - Parameters include mass eruption rate (MER), eruption duration, plume height, and grain size distribution.
-   - Weighted by probabilities derived from VEI data.
-3. **Automated Data Processing:**
-   - Real-time data collection from Volcanic Ash Advisory Centers (VAACs).
-   - Integration of empirical relationships and Bayesian models for parameter estimation.
+## 📦 Repository Structure
 
-### Deliverables
-1. Python scripts for probabilistic sampling of eruption parameters.
-2. Automated tools for scraping and processing VAAC reports.
-3. Statistical models for parameter estimation using Bayesian principles.
-4. Probabilistic maps and distributions for volcanic ash concentration.
+```
+📁 PhaseOne/        # Probabilistic ESP sampling and VEI modeling
+📁 PhaseTwo/        # Real-time automation using VONA, infrasound, satellite
+📁 PhaseThree/      # Visualization and probabilistic analysis of NAME outputs
+📄 requirements.txt # Installation dependencies
 
-## Methodology
+```
 
-### Workflow Summary
-| Step | Action | Output |
-|------|--------|--------|
-| 1    | Parse location and volcano name from VAAC. | Volcano name and location |
-| 2    | Calculate weighted VEI using Whelley et al. (2015). | Weighted VEI |
-| 3    | Estimate total volume using VEI. | Total Volume (km³ or m³) |
-| 4    | Calculate Total Erupted Mass (TEM). | TEM (kg) |
-| 5    | Determine MER using TEM and eruption duration. | MER (kg/s) |
-| 6    | Estimate eruption duration. | Duration (hours) |
-| 7    | Derive plume height and fine debris mass fraction. | Plume Height (km), Fine Debris |
+---
 
-### Data Sources
-1. **Whelley et al. (2015):** Annual VEI probabilities.
-2. **IVESPA Database:** Tephra density and eruption statistics.
-3. **VAAC Reports:** Real-time eruption notifications.
-4. **Empirical Relationships:** For volume, mass, and plume height.
+## 🛠 Installation Instructions
 
-## Python Scripts Overview
+Ensure Python 3.7 or later is installed. Then install the required packages using:
 
-### VAAC Data Parser
-- **Class Name:** `VEP_TVAAC_VAAText`
-- **Features:**
-  - Extracts HTML tables from VAAC advisories.
-  - Processes volcano name, location, and ash cloud height.
-  - Outputs structured data (CSV, raw text).
+```bash
+pip install -r requirements.txt
+```
 
-### Probabilistic VEI Calculation
-- **Functionality:** Integrates Whelley et al. (2015) database for VEI probabilities.
-- **Outputs:** Weighted VEI for each volcano.
+If you wish to work with individual phases manually, use:
 
-### Volume and Mass Calculations
-- **Method:**
-  - Converts VEI to erupted volume using historical data.
-  - Computes TEM using density estimates and Bayesian techniques.
-- **Outputs:** Probabilistic distributions for volume and mass.
+### PhaseOne:
+```bash
+pip install numpy pandas matplotlib
+```
 
-### Mass Eruption Rate and Duration
-- **Input:** TEM and duration relationships.
-- **Output:** MER estimates using Bayesian statistics and IVESPA data.
+### PhaseTwo:
+```bash
+pip install beautifulsoup4 requests gdal tqdm
+```
 
-### Plume Height Estimation
-- **Method:**
-  - Bayesian linear regression on MER and plume height.
-  - Generates posterior distributions for uncertainty quantification.
+### PhaseThree:
+```bash
+pip install panel xarray netCDF4 cartopy matplotlib dask
+```
 
-## Figures and Visual Outputs
-The scripts generate various plots to visualize relationships between eruption parameters:
-1. **VEI vs. Volume:** Empirical and probabilistic estimates.
-2. **VEI vs. Total Erupted Mass:** Percentile-based contours.
-3. **MER vs. Plume Height:** Predictive distributions and posterior estimates.
-4. **Mass Fraction of Fine Debris:** Probabilistic relationships with MER.
+---
 
-## References
-1. Aubry, T.J. et al., 2023, *New Insights Into the Relationship Between Mass Eruption Rate and Volcanic Column Height.*
-2. Mastin, L.G., et al., 2009, *Preliminary Spreadsheet of Eruption Source Parameters for Volcanoes of the World.*
-3. Whelley, P.L., et al., 2015, *The Frequency of Explosive Volcanic Eruptions in Southeast Asia.*
+## 🚀 Usage Examples
 
-For more details, visit the [GitHub Repository](https://github.com/vharg/Eruption-Source-Parameters/tree/main).
-## Contact
-For further details or questions, please reach out to:
+This repository is organized into three phases, each with standalone scripts and Jupyter notebooks for batch or interactive analysis. Below is a summary of how to use each phase.
+
+---
+
+### 🔹 Phase One: Probabilistic Eruption Source Parameter (ESP) Sampling
+
+This phase generates eruption source parameters using VEI-based probability distributions, built on the dataset by Whelley et al. (2015), which includes >750 volcanoes in Southeast Asia.
+
+#### 🧪 Usage via Notebook (`phase1.ipynb`)
+
+1. **Load VEI Dataset:**
+```python
+import vei
+data_loader = vei.LOADDATA()
+whelley_data = data_loader.whelley_2015(as_geodataframe=True)
+```
+
+2. **Parse Volcanic Ash Advisory (VAA) Reports from Tokyo VAAC:**
+```python
+from vep_vaa_text import VEP_TVAAC_VAAText
+scraper = VEP_TVAAC_VAAText(year=2020)
+scraper.fetch_webpage()
+tables = scraper.extract_all_tables()
+```
+
+3. **Filter Specific Volcano or Advisory Reports:**
+```python
+search_results = scraper.search(query='SINABUNG', date_time=None, advisory_number='2020')
+```
+
+4. **Estimate ESP Parameters:**
+Generate mass eruption rate (MER), total mass, plume height, and grain size. Outputs can be saved for use in NAME.
+
+---
+
+### 🔹 Phase Two: Real-Time ESP Update from VONA Reports
+
+Phase Two automates monitoring and updating of eruption parameters using real-time VONA messages.
+
+#### 🧪 Usage via Notebook (`Phase_Two.ipynb`) or Script
+
+1. **Live Monitoring Loop with ESP Updates:**
+```python
+from esp_init import ESP_INIT
+from vona_trigger import fetch_latest_vona
+import time, os
+from tqdm import tqdm
+
+while True:
+    vona_data = fetch_latest_vona()
+    esp = ESP_INIT(vona_data)
+    print(esp.summarize())
+    for _ in tqdm(range(60)):
+        time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
+```
+
+2. **Functional Highlights:**
+   - Parses VONA XML/HTML feeds
+   - Detects changes in plume height, VEI, or volcano name
+   - Triggers `ESP_INIT` to recalculate NAME input values
+
+---
+
+### 🔹 Phase Three: Visualization and Probabilistic Analysis via Panel Dashboard
+
+This phase provides a web-based interactive application for processing and visualizing outputs from NAME model simulations.
+
+#### 🖥 Usage via `app.py` Dashboard
+
+1. **Start the Dashboard:**
+```bash
+panel serve app.py --autoreload --show
+```
+
+2. **Workflow Inside the App:**
+- **Step 1 (Optional):** Upload a `.zip` containing `AQOutput_3DField_*.txt` and `AQOutput_horizontal_*.txt`
+- **Step 2 (Required):** Click `Process ZIP`
+- **Step 3 (Optional):** Download plots, animations, or sample ZIPs
+
+3. **Tabs Available:**
+- **3D Field Tab:** Animate and export maps by altitude and time
+- **2D Field Tab:** Visualize air concentration, dry and wet deposition
+- **Bayesian Analysis Tab:** Run exceedance probability analysis using posterior sampling
+- **Media Viewer Tab:** Browse and download `.gif`, `.jpg`, and `.zip` products
+
+
+
+## 🗂 Input Format
+
+Example input ZIP for dashboard:
+
+```
+Taal_273070_20200112_scenario_1.zip
+├── AQOutput_3DField_*.txt
+├── AQOutput_horizontal_*.txt
+```
+
+---
+
+## 💾 Output Examples
+
+```bash
+media/
+├── 3D/
+│   └── ash_altitude10km_runTimes.gif
+├── 2D/
+│   └── air_concentration.gif
+├── Exceedance_3D/
+│   └── average_exceedance.png
+├── Exceedance_2D/
+│   └── air_concentration_exceedance.png
+└── app_errors.log
+```
+
+---
+
+## 📘 Documentation
+
+Each script includes detailed docstrings explaining:
+- Inputs and outputs
+- Data sources used (e.g., Whelley et al., VAAC)
+- Bayesian methods and regression logic
+
+
+---
+
+## 📬 Contact
+
 **Dr. Mahmud Muhammad**  
-Email: [mahmud.geology@hotmail.com](mailto:mahmud.geology@hotmail.com)  
-Website: [mahmudm.com](http://mahmudm.com)
+📧 [mahmud.muhammad@hotmail.com](mailto:mahmud.muhammad@hotmail.com)  
+🔗 [mahmudm.com](http://mahmudm.com)
