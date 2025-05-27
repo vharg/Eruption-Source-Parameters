@@ -88,18 +88,150 @@ Phase Two automates monitoring and updating of eruption parameters using real-ti
 
 1. **Live Monitoring Loop with ESP Updates:**
 ```python
-from esp_init import ESP_INIT
-from vona_trigger import fetch_latest_vona
-import time, os
-from tqdm import tqdm
+"""
+VONA Monitoring Script
 
-while True:
-    vona_data = fetch_latest_vona()
-    esp = ESP_INIT(vona_data)
-    print(esp.summarize())
-    for _ in tqdm(range(60)):
-        time.sleep(1)
+This script continuously monitors the latest Volcanic Observatory Notice for Aviation (VONA) reports 
+and detects changes in key volcanic activity parameters such as volcano name, ash cloud height above ground level (AGL),
+and volcanic explosivity index (VEI) range. When changes are detected, the screen is cleared, and updated information is displayed.
+
+Key Features:
+- Fetches VONA reports from a specified data source (default: "MAGMA").
+- Detects changes in volcano name, ash cloud height, and VEI range.
+- Updates the display when changes occur.
+- Uses the `ESP_INIT` function for eruption source parameter analysis when new data is available.
+- Implements a progress bar to visualize the monitoring interval.
+
+Dependencies:
+- `vona_trigger`: Retrieves VONA reports.
+- `re`: For text normalization.
+- `esp_init.ESP_INIT`: Processes eruption source parameters.
+- `time`: Introduces delays between monitoring cycles.
+- `os`: Clears the terminal screen.
+- `tqdm`: Provides a visual progress bar for monitoring intervals.
+
+Contact: 
+Dr. Mahmud Muhammad
+Email: mahmud.muhammad@hotmail.com
+
+"""
+
+
+import vona_trigger
+import re
+from esp_init import ESP_INIT
+import time
+import os
+from tqdm import tqdm  # For progress bar
+from vona_trigger import PlumeHeightAnalyzer_FromInfrasound
+
+### Plume Height from Infrasound
+analyzer = PlumeHeightAnalyzer_FromInfrasound("./allPlumeHeights/")
+dataset_name = "sparks"  # sparks or mastin
+
+mono_mean = analyzer.get_mono_mean(dataset_name) # This represent min Plume Height
+di_mean = analyzer.get_di_mean(dataset_name) # This represents max plume Height 
+
+print(f"Mono Mean for {dataset_name}: {mono_mean}")
+print(f"DI Mean for {dataset_name}: {di_mean}")
+
+combined=mono_mean + di_mean
+# Round numbers to two decimal places and remove duplicates
+combined = list(set(int(round(num)) for num in combined))
+# Sort the result (optional)
+combined.sort()
+
+Use_Infrasound_Height = combined if combined is not None else None
+print(f"Combined Mono and di mean Plume Heights: {combined}")
+
+########################################
+
+# Initialize storage for previous variable values
+previous_values = {
+    "volcano_name": None,
+    "AshCloudHeight_AGL": None,
+    "vei_range": None
+}
+
+def clear_screen():
+    """Clears the terminal screen for a fresh output."""
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def normalize_text(text):
+    """Removes extra spaces and normalizes text for meaningful comparison."""
+    if isinstance(text, str):
+        return re.sub(r'\s+', ' ', text).strip()  # Replace multiple spaces with one and trim
+    return text  # Return non-string values as-is
+
+Use_Infrasound=False # Change this to True if you want to use observed Plume Height from Infrasound Team
+while True:
+    # Fetch the latest VONA data
+    VONA_reports, VONA_latest_data, volcano_name, latitude, longitude, AshCloudHeight_AGL, vei_range = vona_trigger.VONA_Message(VONA_Source="MAGMA")
+   
+        
+    
+    # Store current values in a dictionary
+    current_values = {
+       
+        "volcano_name": volcano_name,
+        "AshCloudHeight_AGL": AshCloudHeight_AGL,
+        "vei_range": vei_range
+    }
+
+   # Check for changes in each variable
+    changes_detected = False
+    for key in current_values:
+        prev_value = normalize_text(previous_values[key]) if previous_values[key] is not None else None
+        curr_value = normalize_text(current_values[key])
+        
+        if prev_value != curr_value:
+            changes_detected = True
+    
+    # If changes are detected, clear screen and print new data
+    
+    if changes_detected:
+        clear_screen()  # Clears previous prints and outputs
+        print("🔔 **New VONA Data Detected:**\n")
+        for key in current_values:
+            prev_value = normalize_text(previous_values[key]) if previous_values[key] is not None else None
+            curr_value = normalize_text(current_values[key])
+            
+            if prev_value != curr_value:
+                print(f"🔹 **Change detected in {key}:**")
+                print(f"   - **Previous:** {prev_value}")
+                print(f"   - **New:** {curr_value}\n")
+                previous_values[key] = current_values[key]  # Update stored value
+
+        # Convert AshCloudHeight_AGL to km if it's not None
+        if AshCloudHeight_AGL is not None or vei_range is  None:
+            
+            ESP_INIT(vei_levels=None, PlumeHeight=AshCloudHeight_AGL, show_plots=True)
+
+        if vei_range is not None or AshCloudHeight_AGL is  None: 
+            ESP_INIT(vei_levels=vei_range, PlumeHeight=None, show_plots=True)
+        
+        # if AshCloudHeight_AGL is not None and vei_range is not None:
+        
+        #     ESP_INIT(vei_levels=None, PlumeHeight=AshCloudHeight_AGL, show_plots=True)
+        #     ESP_INIT(vei_levels=vei_range, PlumeHeight=None, show_plots=True)
+        
+        if AshCloudHeight_AGL is  None and vei_range is  None:
+            ESP_INIT(vei_levels=None, PlumeHeight=None, show_plots=True)
+   
+        if Use_Infrasound_Height is not None:
+            ESP_INIT(vei_levels=None, PlumeHeight=Use_Infrasound_Height, show_plots=True)
+            analyzer.visualize_datasets()
+    
+    
+    # Progress bar with dynamic status
+    status_message = "🟢 Waiting for next VONA report..." if changes_detected else "🟡 No new data - Monitoring..."
+
+    with tqdm(total=1800, desc=status_message, unit="s", bar_format="{l_bar}{bar} {remaining}") as pbar:
+        for _ in range(1800):
+            time.sleep(1)  # Sleep in 1-second intervals
+            pbar.update(1)  # Update progress bar
+
+
 ```
 
 2. **Functional Highlights:**
