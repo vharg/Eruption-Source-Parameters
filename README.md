@@ -55,28 +55,71 @@ This phase generates eruption source parameters using VEI-based probability dist
 
 #### 🧪 Usage via Notebook (`phase1.ipynb`)
 
-1. **Load VEI Dataset:**
-```python
+# 1. Load VEI Dataset:
 import vei
 data_loader = vei.LOADDATA()
 whelley_data = data_loader.whelley_2015(as_geodataframe=True)
-```
 
-2. **Parse Volcanic Ash Advisory (VAA) Reports from Tokyo VAAC:**
-```python
+# 2. Parse Volcanic Ash Advisory (VAA) Reports from Tokyo VAAC:
 from vep_vaa_text import VEP_TVAAC_VAAText
 scraper = VEP_TVAAC_VAAText(year=2020)
 scraper.fetch_webpage()
 tables = scraper.extract_all_tables()
-```
 
-3. **Filter Specific Volcano or Advisory Reports:**
-```python
+# 3. Filter Specific Volcano or Advisory Reports:
 search_results = scraper.search(query='SINABUNG', date_time=None, advisory_number='2020')
-```
+vaa_data, latest_report, latest_data = scraper.download_vaa_text(
+    output_dir="./vaa_texts_2", filtered_results=search_results, csv=True, gdf=whelley_data)
 
-4. **Estimate ESP Parameters:**
-Generate mass eruption rate (MER), total mass, plume height, and grain size. Outputs can be saved for use in NAME.
+# 4. Estimate ESP Parameters:
+# Generate mass eruption rate (MER), total eruption mass, plume height, and grain size.
+
+# VEI to Mass
+from vei import VEI_BulkVolume_Mass
+vei_model = VEI_BulkVolume_Mass(use_default_densities=False, num_samples=1_000_000)
+percentiles = list(range(5, 96, 5))
+vei_model.generate_probabilistic_volumes(sampling_method='exponential', percentiles=percentiles)
+vei_model.calculate_mass(percentiles=percentiles)
+vei_data = vei_model.data
+
+# Filter VEI levels based on volcano
+_, vei_range = data_loader.search_whelley_2015(Volcano=latest_data['VOLCANO'].iloc[0])
+vei_data = vei_data[vei_data['VEI'].isin(vei_range)].reset_index(drop=True)
+
+# MER Estimation
+from mer_predict import MERPredictor
+Aubrey = data_loader.load_Aubry()
+tem_values = vei_data['Mass_50th_kg'].to_list()
+mer_model = MERPredictor(Aubrey)
+mer_results = mer_model.predict_mer(tem_values, percentiles=percentiles)
+mer_results['VEI'] = vei_data['VEI']
+
+# Plume Height Prediction
+from plume_rise_predict import PlumeHeightPredictor
+Mastin = data_loader.load_Mastin()
+plume_model = PlumeHeightPredictor(Mastin)
+heights = plume_model.predict_height_with_uncertainty(
+    mer_results['MERPercentile_50'].tolist(), output_file='predicted_height_with_uncertainty.csv', percentiles=percentiles)
+heights['VEI'] = mer_results['VEI']
+
+# MER from Observed Plume Heights (Optional)
+from mer_from_height import MERPredictorFromHeight
+Combined = vei_data = pd.concat([Aubrey, data_loader.load_IVESPA(), data_loader.load_Mastin_a(as_geodataframe=True)])
+obs_mer_model = MERPredictorFromHeight(Combined)
+obs_mer = obs_mer_model.predict_MER_with_uncertainty([5, 8], output_file="predicted_mer_fromheight.csv")
+
+# Grain Size <63µm Prediction
+from ParticleSize_MER import Predict_ASH_BELOW_63_Micron
+mastin_a = data_loader.load_Mastin_a(as_geodataframe=True)
+psize_model = Predict_ASH_BELOW_63_Micron(mastin_a)
+psize_model.set_xvar('MER_kg/s')
+psize_model.set_yvar('MASS_FRACTION_ASH_BELOW_63_micron')
+ash_fraction = psize_model.predict_with_uncertainty(mer_results['MERPercentile_95'].tolist())
+for col in ash_fraction.columns[1:]:
+    heights[col] = ash_fraction[col]
+
+# Final ESP predictions for NAME
+heights.to_csv("Final_prediction_results.csv", index=False)
 
 ---
 
