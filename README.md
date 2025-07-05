@@ -154,64 +154,37 @@ Phase Two automates monitoring and updating of eruption parameters using real-ti
 1. **Live Monitoring Loop with ESP Updates:**
 ```python
 """
-VONA Monitoring Script
+VONA ESP Processing Loop
 
-This script continuously monitors the latest Volcanic Observatory Notice for Aviation (VONA) reports 
-and detects changes in key volcanic activity parameters such as volcano name, ash cloud height above ground level (AGL),
-and volcanic explosivity index (VEI) range. When changes are detected, the screen is cleared, and updated information is displayed.
-
-Key Features:
-- Fetches VONA reports from a specified data source (default: "MAGMA").
-- Detects changes in volcano name, ash cloud height, and VEI range.
-- Updates the display when changes occur.
-- Uses the `ESP_INIT` function for eruption source parameter analysis when new data is available.
-- Implements a progress bar to visualize the monitoring interval.
+This script continuously monitors for new VONA messages using the `vona_trigger` module.
+When a new VONA alert is detected (based on changes in volcano name, ash cloud height, or VEI),
+it initializes eruption source parameter (ESP) forecasting using the `ESPInitializer` class.
+The output is then passed to `SimulationParameterGenerator` to create NAME model simulation input files.
 
 Dependencies:
-- `vona_trigger`: Retrieves VONA reports.
-- `re`: For text normalization.
-- `esp_init.ESP_INIT`: Processes eruption source parameters.
-- `time`: Introduces delays between monitoring cycles.
-- `os`: Clears the terminal screen.
-- `tqdm`: Provides a visual progress bar for monitoring intervals.
-
-Contact: 
-Dr. Mahmud Muhammad
-Email: mahmud.muhammad@hotmail.com
-
+- vona_trigger
+- re
+- os
+- esp_init (ESPInitializer class)
+- nameModel_file_generator (SimulationParameterGenerator class)
 """
-
-
 import vona_trigger
 import re
-from esp_init import ESP_INIT
-import time
+from esp_init import ESPInitializer
 import os
-from tqdm import tqdm  # For progress bar
-from vona_trigger import PlumeHeightAnalyzer_FromInfrasound
+import time
+from tqdm import tqdm
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+from rich import box
+from nameModel_file_generator import SimulationParameterGenerator
 
-### Plume Height from Infrasound
-analyzer = PlumeHeightAnalyzer_FromInfrasound("./allPlumeHeights/")
-dataset_name = "sparks"  # sparks or mastin
+# Initialize rich console
+console = Console()
 
-mono_mean = analyzer.get_mono_mean(dataset_name) # This represent min Plume Height
-di_mean = analyzer.get_di_mean(dataset_name) # This represents max plume Height 
-
-print(f"Mono Mean for {dataset_name}: {mono_mean}")
-print(f"DI Mean for {dataset_name}: {di_mean}")
-
-combined=mono_mean + di_mean
-# Round numbers to two decimal places and remove duplicates
-combined = list(set(int(round(num)) for num in combined))
-# Sort the result (optional)
-combined.sort()
-
-Use_Infrasound_Height = combined if combined is not None else None
-print(f"Combined Mono and di mean Plume Heights: {combined}")
-
-########################################
-
-# Initialize storage for previous variable values
+# Initialize storage for previous values
 previous_values = {
     "volcano_name": None,
     "AshCloudHeight_AGL": None,
@@ -219,90 +192,104 @@ previous_values = {
 }
 
 def clear_screen():
-    """Clears the terminal screen for a fresh output."""
+    """Clears the terminal screen for a clean output."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def normalize_text(text):
-    """Removes extra spaces and normalizes text for meaningful comparison."""
+    """Normalizes text by removing excess whitespace."""
     if isinstance(text, str):
-        return re.sub(r'\s+', ' ', text).strip()  # Replace multiple spaces with one and trim
-    return text  # Return non-string values as-is
+        return re.sub(r'\s+', ' ', text).strip()
+    return text
 
-Use_Infrasound=False # Change this to True if you want to use observed Plume Height from Infrasound Team
+def fancy_status_panel(status: str, emoji="🔔", style="bold green"):
+    """Display a highlighted status message."""
+    console.print(Panel(Text(status, justify="center", style=style), title=emoji + " STATUS", style="bold blue", expand=False))
+
+def display_change_table(prev_dict, curr_dict):
+    """Pretty table showing changes."""
+    table = Table(title="Change Summary", box=box.DOUBLE_EDGE, title_style="bold magenta")
+    table.add_column("Field", style="cyan", justify="left")
+    table.add_column("Previous", style="red")
+    table.add_column("Current", style="green")
+
+    for key in curr_dict:
+        prev = normalize_text(prev_dict[key]) if prev_dict[key] is not None else "-"
+        curr = normalize_text(curr_dict[key])
+        if prev != curr:
+            table.add_row(key, str(prev), str(curr))
+
+    console.print(table)
+
+
+# Main loop
 while True:
-    # Fetch the latest VONA data
     VONA_reports, VONA_latest_data, volcano_name, latitude, longitude, AshCloudHeight_AGL, vei_range = vona_trigger.VONA_Message(VONA_Source="MAGMA")
-   
-        
-    
-    # Store current values in a dictionary
+    VONA_latest_data.reset_index(drop=True, inplace=True)
+    row = VONA_latest_data.iloc[0]
+    issue_date = row.get("Issued", "_")
+
     current_values = {
-       
         "volcano_name": volcano_name,
         "AshCloudHeight_AGL": AshCloudHeight_AGL,
         "vei_range": vei_range
     }
 
-   # Check for changes in each variable
     changes_detected = False
     for key in current_values:
         prev_value = normalize_text(previous_values[key]) if previous_values[key] is not None else None
         curr_value = normalize_text(current_values[key])
-        
         if prev_value != curr_value:
             changes_detected = True
-    
-    # If changes are detected, clear screen and print new data
-    
+
     if changes_detected:
-        clear_screen()  # Clears previous prints and outputs
-        print("🔔 **New VONA Data Detected:**\n")
-        for key in current_values:
-            prev_value = normalize_text(previous_values[key]) if previous_values[key] is not None else None
-            curr_value = normalize_text(current_values[key])
-            
-            if prev_value != curr_value:
-                print(f"🔹 **Change detected in {key}:**")
-                print(f"   - **Previous:** {prev_value}")
-                print(f"   - **New:** {curr_value}\n")
-                previous_values[key] = current_values[key]  # Update stored value
+        clear_screen()
+        fancy_status_panel("New VONA Data Detected", emoji="🌋")
 
-        # Convert AshCloudHeight_AGL to km if it's not None
-        if AshCloudHeight_AGL is not None or vei_range is  None:
-            
-            ESP_INIT(vei_levels=None, PlumeHeight=AshCloudHeight_AGL, show_plots=True)
+        display_change_table(previous_values, current_values)
+        previous_values.update(current_values)
 
-        if vei_range is not None or AshCloudHeight_AGL is  None: 
-            ESP_INIT(vei_levels=vei_range, PlumeHeight=None, show_plots=True)
-        
-        # if AshCloudHeight_AGL is not None and vei_range is not None:
-        
-        #     ESP_INIT(vei_levels=None, PlumeHeight=AshCloudHeight_AGL, show_plots=True)
-        #     ESP_INIT(vei_levels=vei_range, PlumeHeight=None, show_plots=True)
-        
-        if AshCloudHeight_AGL is  None and vei_range is  None:
-            ESP_INIT(vei_levels=None, PlumeHeight=None, show_plots=True)
-   
-        if Use_Infrasound_Height is not None:
-            ESP_INIT(vei_levels=None, PlumeHeight=Use_Infrasound_Height, show_plots=True)
-            analyzer.visualize_datasets()
-    
-    
-    # Progress bar with dynamic status
-    status_message = "🟢 Waiting for next VONA report..." if changes_detected else "🟡 No new data - Monitoring..."
+        # Forecast using plume height (when VEI is absent)
+        if AshCloudHeight_AGL is not None or vei_range is None:
+            console.print("\n[bold blue]Running ESP Forecast (Plume Height)...[/bold blue]")
+            esp = ESPInitializer(vei_levels=None, plume_height=AshCloudHeight_AGL, show_plots=True,
+                                 base_directory=f'{volcano_name}/{issue_date}/VONA')
+            esp.run_all_forecasts(percentiles=[5,50,95])
+            heights = esp.get_results_dataframe()
 
-    with tqdm(total=1800, desc=status_message, unit="s", bar_format="{l_bar}{bar} {remaining}") as pbar:
+            if heights is not None:
+                generator = SimulationParameterGenerator(
+                    vona_input=VONA_latest_data,
+                    plume_input=heights,
+                    output_dir=f'{volcano_name}_{issue_date}/VONA/Name_inputFiles'
+                )
+                created_files = generator.run()
+                console.print("[green]✓ NAME input files created for Plume Height run.[/green]")
+
+        # Forecast using VEI (when both inputs are present)
+        if vei_range is not None : # and AshCloudHeight_AGL is not None
+            console.print("\n[bold blue]Running ESP Forecast (VEI)...[/bold blue]")
+            esp = ESPInitializer(vei_levels=vei_range, plume_height=None, show_plots=True,
+                                 base_directory=f'{volcano_name}/{issue_date}/init')
+            esp.run_all_forecasts(percentiles=[5,50,95])
+            heights = esp.get_results_dataframe()
+
+            if heights is not None:
+                generator = SimulationParameterGenerator(
+                    vona_input=VONA_latest_data,
+                    plume_input=heights,
+                    output_dir=f'{volcano_name}/{issue_date}/init/Name_inputFiles', duration_hours=1.0)
+                created_files = generator.run()
+                console.print("[green]✓ NAME input files created for VEI run.[/green]")
+
+    # Wait loop with progress bar
+    status_msg = "🟢 Waiting for next VONA report..." if changes_detected else "🟡 No new data - Monitoring..."
+    console.print(Panel(status_msg, title="⏱ Status", expand=False, style="bold yellow" if not changes_detected else "bold green"))
+
+    with tqdm(total=1800, desc="⏳ Refreshing in", unit="s", bar_format="{l_bar}{bar} | ETA: {remaining}") as pbar:
         for _ in range(1800):
-            time.sleep(1)  # Sleep in 1-second intervals
-            pbar.update(1)  # Update progress bar
+            time.sleep(1)
+            pbar.update(1)
 
-
-```
-
-2. **Functional Highlights:**
-   - Parses VONA XML/HTML feeds
-   - Detects changes in plume height, VEI, or volcano name
-   - Triggers `ESP_INIT` to recalculate NAME input values
 
 ---
 
