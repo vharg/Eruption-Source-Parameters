@@ -1,0 +1,25 @@
+simulationStartDatetime 20200112_0500
+simulationDurationInHour 24
+volcanoName Taal_273070
+volcanoX 120.993
+volcanoY 14.002
+summitHeightInMetre 311
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+
+emissionSourceParameterSet_1 19000_01_00_2020_01_12_08_30
+emissionSourceParameterSet_2 16125_01_00_2020_01_12_09_30
+emissionSourceParameterSet_3 17730_01_00_2020_01_12_10_30
+emissionSourceParameterSet_4 14138_01_00_2020_01_12_11_30
+emissionSourceParameterSet_5 8968_01_00_2020_01_12_12_30
+emissionSourceParameterSet_6 12278_01_00_2020_01_12_13_30
+emissionSourceParameterSet_7 12565_01_00_2020_01_12_14_30
+emissionSourceParameterSet_8 13160_01_00_2020_01_12_15_30
+
+
+
+

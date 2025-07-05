@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-06-24 02:29:41 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/17531?signature=7a1d5eeeb06dd413d4df6c601f45f7532c326ea9943bd1f2b8725c59b34c1a9a
+================================================================================
+
+Issued              : 20250622/2223Z
+Volcano             : Raung (263340)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Raung Volcano Observatory
+Notice Number       : 2025RAU036
+Volcano Location    : S 08 deg 07 min 30 sec E 114 deg 02 min 31 sec
+Area                : East java, Indonesia
+Summit Elevation    : 10662 FT (3332 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 2223 UTC (0523 local).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 12582 FT (3932 M) above sea level or 1920 FT (600 M) above summit. May be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash cloud moving from southwest to west. Volcanic ash is observed to be gray. The intensity of volcanic ash is observed to be medium.
+Remarks             : Tremor recorded on seismogram with maximum amplitude 3 mm. Seismic activity is characterized by continuous tremor.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.125
+Longitude           : 114.04194444444444
+AshCloudHeight_ASL  : 3932
+AshCloudHeight_AGL  : 600
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

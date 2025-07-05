@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import cartopy.io.shapereader as shpreader
 from adjustText import adjust_text
-from .interpolation import interpolate_grid
+from .interpolation import interpolate_grid , create_grid
 from .basemaps import draw_etopo_basemap
 import imageio.v2 as imageio
 import shutil
@@ -71,13 +71,17 @@ class Plot_3DField_Data:
                  include_metadata=True, threshold=0.1,
                  zoom_width_deg=5.0, zoom_height_deg=5.0, zoom_level=10, basemap_mode="basemap"):
         self.animator = animator
+        
+        self.meta_attr=self.animator.datasets[0].attrs
+        run_name=self.meta_attr.get('run_name', 'unknown_run')
                 
         self.output_dir = os.path.abspath(
             os.path.join(
                 os.environ.get("NAME_OUTPUT_DIR", tempfile.gettempdir()),
-                output_dir
+                output_dir + "/"+ run_name
             )
         )
+        
         os.makedirs(self.output_dir, exist_ok=True)
         self.cmap = cmap
         self.fps = fps
@@ -89,7 +93,7 @@ class Plot_3DField_Data:
         self.country_geoms = list(shpreader.Reader(shp).records())
         self.zoom_level=zoom_level
         self.basemap_mode=basemap_mode
-        self.meta_attr=self.animator.datasets[0].attrs
+        
         
         #############3
         
@@ -108,6 +112,8 @@ class Plot_3DField_Data:
         self.lat_min = np.min(self.animator.lats)
         self.lat_max = np.max(self.animator.lats)
         
+        self.lon_grid_global, self.lat_grid_global=create_grid(self.meta_attr)
+        
         #####################3
         
     def _make_dirs(self, path):
@@ -119,10 +125,28 @@ class Plot_3DField_Data:
         lon_max = center_lon + self.zoom_width / 2
         lat_min = center_lat - self.zoom_height / 2
         lat_max = center_lat + self.zoom_height / 2
+
+        # Ensure non-zero extent
+        if lon_min == lon_max:
+            lon_min -= 0.05
+            lon_max += 0.05
+        if lat_min == lat_max:
+            lat_min -= 0.05
+            lat_max += 0.05
+
+        # Also clip to global domain
+        lon_min = max(lon_min, np.min(self.animator.lons))
+        lon_max = min(lon_max, np.max(self.animator.lons))
+        lat_min = max(lat_min, np.min(self.animator.lats))
+        lat_max = min(lat_max, np.max(self.animator.lats))
+
         lat_idx = np.where((self.animator.lats >= lat_min) & (self.animator.lats <= lat_max))[0]
         lon_idx = np.where((self.animator.lons >= lon_min) & (self.animator.lons <= lon_max))[0]
+
         return lat_idx, lon_idx, lon_min, lon_max, lat_min, lat_max
 
+    
+    
     def _get_max_concentration_location(self):
         max_conc = -np.inf
         center_lat = center_lon = None
@@ -154,31 +178,7 @@ class Plot_3DField_Data:
         adjust_text(texts, ax=ax, only_move={'points': 'y', 'text': 'y'},
                     arrowprops=dict(arrowstyle="->", color='white', lw=0.5))
 
-    # def _plot_frame(self, ax, data, lons, lats, title, levels, scale_label, proj):
-    #     draw_etopo_basemap(ax, mode="basemap", zoom=self.zoom_level)
-    #     c = ax.contourf(lons, lats, data, levels=levels, cmap=self.cmap, alpha=0.6, transform=proj)
-    #     ax.contour(lons, lats, data, levels=levels, colors='black', linewidths=0.5, transform=proj)
-    #     ax.set_title(title)
-    #     ax.set_extent([lons.min(), lons.max(), lats.min(), lats.max()])
-    #     ax.coastlines()
-    #     ax.add_feature(cfeature.BORDERS, linestyle=':')
-    #     ax.add_feature(cfeature.LAND)
-    #     ax.add_feature(cfeature.OCEAN)
-        
-    #     raw= (self.meta_attr.get('release_location'))
-        
-    #     if raw is not None:
-    #         # Split and strip
-    #         lon_str, lat_str = raw.strip().split()
-            
-    #                 # Convert to float with direction handling
-    #         lon = float(lon_str[:-1]) * (1 if lon_str[-1].upper() == 'E' else -1)
-    #         lat = float(lat_str[:-1]) * (1 if lat_str[-1].upper() == 'N' else -1)
-            
-    #         ax.plot(lon, lat, marker='^', color='yellow',
-    #             markersize=7, transform=proj, label="Vent Location", zorder=5)
-    #         ax.legend(loc="upper left", fontsize=7)
-    #     return c
+    
     
     def _plot_frame(self, ax, data, lons, lats, title, levels, scale_label, proj):
         ax.set_title(title)
@@ -239,12 +239,6 @@ class Plot_3DField_Data:
 
 
     def plot_single_z_level(self, z_km, filename="z_level.gif"):
-           
-        # if z_km not in self.animator.levels:
-        #     print(f"Z level {z_km} km not found.")
-        #     return
-        # z_index = np.where(self.animator.levels == z_km)[0][0]
-        
         levels = np.array(self.animator.levels)
 
         # Find closest available Z level
@@ -253,15 +247,9 @@ class Plot_3DField_Data:
             print(f"⚠ Z level {z_km} km not found. Using closest available level: {closest_z} km instead.")
             z_km = closest_z
 
-        z_indices = np.where(np.isclose(levels, z_km))[0]
-        if len(z_indices) == 0:
-            print(f"❌ No matching Z level found near {z_km} km.")
-            return
-
-        z_index = z_indices[0]
-        print(f"✅ Z index: {z_index} for Z = {z_km} km")
-        
+        z_index = np.where(np.isclose(levels, z_km))[0][0]
         output_path = os.path.join(self.output_dir, "z_levels", filename)
+
         fig = plt.figure(figsize=(16, 8))
         proj = ccrs.PlateCarree()
         ax1 = fig.add_subplot(1, 2, 1, projection=proj)
@@ -271,85 +259,134 @@ class Plot_3DField_Data:
         lat_idx, lon_idx, lon_min, lon_max, lat_min, lat_max = self._get_zoom_indices(center_lat, center_lon)
         lat_zoom = self.animator.lats[lat_idx]
         lon_zoom = self.animator.lons[lon_idx]
-        lon_zoom_grid, lat_zoom_grid = np.meshgrid(lon_zoom, lat_zoom)
-        
-       
 
-        meta = self.animator.datasets[0].attrs
-        valid_frames = []
-        for t in range(len(self.animator.datasets)):
-            interp = interpolate_grid(self.animator.datasets[t]['ash_concentration'].values[z_index],
-                                      self.animator.lon_grid, self.animator.lat_grid)
-            if np.isfinite(interp).sum() > 0:
-                valid_frames.append(t)
-        if not valid_frames:
-            print(f"No valid frames for Z={z_km} km.")
-            plt.close()
-            return
+        valid_frames = list(range(len(self.animator.datasets)))
+
+        # 🔵 Precompute global min/max
+        all_data = []
+        for t in valid_frames:
+            data = self.animator.datasets[t]['ash_concentration'].values[z_index]
+            interp = interpolate_grid(data,  self.lon_grid_global, self.lat_grid_global)
+            interp = np.where(np.isnan(interp), 0, interp)
+            all_data.append(interp)
+
+        global_min = min(np.nanmin(arr) for arr in all_data)
+        global_max = max(np.nanmax(arr) for arr in all_data)
+
+        if not np.isfinite(global_min):
+            global_min = 0
+        if not np.isfinite(global_max):
+            global_max = 0
+        if global_min == global_max:
+            levels = [0, 1]
+        else:
+            levels = np.linspace(global_min, global_max, 20)
 
         def update(t):
             ax1.clear()
             ax2.clear()
 
-            data = self.animator.datasets[t]['ash_concentration'].values[z_index]
-            interp = interpolate_grid(data, self.animator.lon_grid, self.animator.lat_grid)
-            interp = np.where(interp < 0, np.nan, interp)
+            interp = all_data[t]
             zoom_plot = interp[np.ix_(lat_idx, lon_idx)]
-
             valid_vals = interp[np.isfinite(interp)]
-            if valid_vals.size == 0:
-                return []
 
-            min_val, max_val = np.nanmin(valid_vals), np.nanmax(valid_vals)
-            log_cutoff = 1e-3
-            use_log = min_val > log_cutoff and (max_val / (min_val + 1e-6)) > 100
-
-            levels = (
-                np.logspace(np.log10(log_cutoff), np.log10(max_val), 20)
-                if use_log else
-                np.linspace(0, max_val, 20)
-            )
-            data_for_plot = np.where(interp > log_cutoff, interp, np.nan) if use_log else interp
-            scale_label = "Log" if use_log else "Linear"
-
-            c = self._plot_frame(ax1, data_for_plot, self.animator.lons, self.animator.lats,
-                                f"T{t+1} | Alt: {z_km} km (Full - {scale_label})", levels, scale_label, proj)
+            c = self._plot_frame(ax1, interp, self.lon_grid_global, self.lat_grid_global,
+                                f"T{t+1} | Alt: {z_km} km", levels, "Linear", proj)
             self._plot_frame(ax2, zoom_plot, lon_zoom, lat_zoom,
-                            f"T{t} | Alt: {z_km} km (Zoom - {scale_label})", levels, scale_label, proj)
+                            f"T{t+1} | Alt: {z_km} km (Zoom)", levels, "Linear", proj)
 
-            self._add_country_labels(ax1, [self.animator.lons.min(), self.animator.lons.max(),
-                                        self.animator.lats.min(), self.animator.lats.max()])
+            self._add_country_labels(ax1, [self.lon_min, self.lon_max, self.lat_min, self.lat_max])
             self._add_country_labels(ax2, [lon_min, lon_max, lat_min, lat_max])
 
-            if not hasattr(update, "colorbar"):
-                update.colorbar = fig.colorbar(c, ax=[ax1, ax2], orientation='vertical',
-                                            label="Ash concentration (g/m³)")
-                formatter = mticker.FuncFormatter(lambda x, _: f'{x:.2g}')
-                update.colorbar.ax.yaxis.set_major_formatter(formatter)
+           
 
-            # ✅ Draw threshold outline and label only if exceeded
+            
             if np.nanmax(valid_vals) > self.threshold:
-                ax1.contour(self.animator.lons, self.animator.lats, interp, levels=[self.threshold],
-                            colors='red', linewidths=2, transform=proj)
+                ax1.contour( self.lon_grid_global, self.lat_grid_global, interp, levels=[self.threshold],
+                                colors='yellow', linewidths=2, transform=proj)
                 ax2.contour(lon_zoom, lat_zoom, zoom_plot, levels=[self.threshold],
-                            colors='red', linewidths=2, transform=proj)
-                ax2.text(0.99, 0.01, f"⚠ Max Thresold Exceed: {np.nanmax(valid_vals):.2f} > {self.threshold} g/m³",
-                        transform=ax2.transAxes, ha='right', va='bottom',
-                        fontsize=9, color='red',
-                        bbox=dict(facecolor='white', alpha=0.8, edgecolor='red'))
+                                colors='yellow', linewidths=2, transform=proj)
 
+                
+                ax2.text(0.99, 0.01, f"⚠ Max Thresold Exceed: {np.nanmax(valid_vals):.2f} > {self.threshold} g/m³",
+                                transform=ax2.transAxes, ha='right', va='bottom',
+                                fontsize=9, color='yellow',
+                                bbox=dict(facecolor='k', alpha=0.8, edgecolor='yellow'))
+            
+            
+            
+            # Threshold contours
+            thresholds = {
+                "Low": 0.002,
+                "Medium": 0.004
+            }
+            threshold_colors = {
+                "Low": "yellow",
+                "Medium": "orange",
+                "High": "red"
+            }
+
+            # >4 mg/m³ (high risk)
+            ax1.contour(
+                self.lon_grid_global, self.lat_grid_global, interp,
+                levels=[thresholds["Medium"]],
+                colors=[threshold_colors["High"]],
+                linewidths=2, transform=proj
+            )
+            ax2.contour(
+                lon_zoom, lat_zoom, zoom_plot,
+                levels=[thresholds["Medium"]],
+                colors=[threshold_colors["High"]],
+                linewidths=2, transform=proj
+            )
+
+            # >2 mg/m³ (caution)
+            ax1.contour(
+                self.lon_grid_global, self.lat_grid_global, interp,
+                levels=[thresholds["Low"]],
+                colors=[threshold_colors["Medium"]],
+                linewidths=2, transform=proj
+            )
+            ax2.contour(
+                lon_zoom, lat_zoom, zoom_plot,
+                levels=[thresholds["Low"]],
+                colors=[threshold_colors["Medium"]],
+                linewidths=2, transform=proj
+            )
+
+            # Legend
+            handles = [
+                plt.Line2D([0], [0], color=threshold_colors["Medium"], lw=2, label=">2 mg/m³ caution"),
+                plt.Line2D([0], [0], color=threshold_colors["High"], lw=2, label=">4 mg/m³ high risk")
+            ]
+            ax2.legend(handles=handles, loc="upper right", fontsize=8, title="Ash thresholds")
+
+            if not hasattr(update, "colorbar"):
+                update.colorbar = fig.colorbar(c, ax=[ax1, ax2], orientation="vertical")
+                update.colorbar.set_label("Ash concentration (g/m³)")
+            
+            
+            
+            
             return []
 
-  
-
-
-        self._draw_metadata_sidebar(fig, meta)
+        self._draw_metadata_sidebar(fig, self.meta_attr)
         self._make_dirs(output_path)
         fig.tight_layout()
-        ani = animation.FuncAnimation(fig, update, frames=valid_frames, blit=False, cache_frame_data =False)
-        ani.save(output_path, writer='pillow', fps=self.fps, dpi=300)
+        ani = animation.FuncAnimation(fig, update, frames=valid_frames, blit=False, cache_frame_data=False)
+        ani.save(output_path, writer="pillow", fps=self.fps, dpi=300)
         plt.close()
         print(f"✅ Saved Z-level animation to {output_path}")
+
+
+
+        # self._draw_metadata_sidebar(fig, meta)
+        # self._make_dirs(output_path)
+        # fig.tight_layout()
+        # ani = animation.FuncAnimation(fig, update, frames=valid_frames, blit=False, cache_frame_data =False)
+        # ani.save(output_path, writer='pillow', fps=self.fps, dpi=300)
+        # plt.close()
+        # print(f"✅ Saved Z-level animation to {output_path}")
 
     def plot_vertical_profile_at_time(self, t_index, filename=None):
         time_label = f"T{t_index+1}"
@@ -361,14 +398,14 @@ class Plot_3DField_Data:
     ################################################
     
     
-    
+
     def animate_altitude(self, t_index: int, output_path: str):
         if not (0 <= t_index < len(self.animator.datasets)):
             print(f"Invalid time index {t_index}. Must be between 0 and {len(self.animator.datasets) - 1}.")
-        
+            return
 
         ds = self.animator.datasets[t_index]
-        fig = plt.figure(figsize=(18, 7))
+        fig = plt.figure(figsize=(16, 8))
         proj = ccrs.PlateCarree()
         ax1 = fig.add_subplot(1, 2, 1, projection=proj)
         ax2 = fig.add_subplot(1, 2, 2, projection=proj)
@@ -383,48 +420,43 @@ class Plot_3DField_Data:
         lat_idx, lon_idx, lon_min, lon_max, lat_min, lat_max = self._get_zoom_indices(center_lat, center_lon)
         lat_zoom = self.animator.lats[lat_idx]
         lon_zoom = self.animator.lons[lon_idx]
-        lon_zoom_grid, lat_zoom_grid = np.meshgrid(lon_zoom, lat_zoom)
 
-        z_indices_with_data = []
-        for z_index in range(len(self.animator.levels)):
-            data = ds['ash_concentration'].values[z_index]
-            interp = interpolate_grid(data, self.animator.lon_grid, self.animator.lat_grid)
-            if np.isfinite(interp).sum() > 0:
-                z_indices_with_data.append(z_index)
+        valid_z = list(range(len(self.animator.levels)))
 
-        if not z_indices_with_data:
-            print(f"No valid Z-levels at time T{t_index + 1}.")
-            plt.close()
-            return
+        # 🔵 Precompute global min/max
+        all_data = []
+        for z in valid_z:
+            data = ds['ash_concentration'].values[z]
+            interp = interpolate_grid(data,  self.lon_grid_global, self.lat_grid_global)
+            interp = np.where(np.isnan(interp), 0, interp)
+            all_data.append(interp)
 
-        def update(z_index):
+        global_min = min(np.nanmin(arr) for arr in all_data)
+        global_max = max(np.nanmax(arr) for arr in all_data)
+
+        if not np.isfinite(global_min):
+            global_min = 0
+        if not np.isfinite(global_max):
+            global_max = 0
+        if global_min == global_max:
+            levels = [0, 1]
+        else:
+            levels = np.linspace(global_min, global_max, 20)
+
+        def update(z):
             ax1.clear()
             ax2.clear()
 
-            data = ds['ash_concentration'].values[z_index]
-            interp = interpolate_grid(data, self.animator.lon_grid, self.animator.lat_grid)
-            interp = np.where(interp < 0, np.nan, interp)
+            interp = all_data[z]
             zoom_plot = interp[np.ix_(lat_idx, lon_idx)]
-
+            
             valid_vals = interp[np.isfinite(interp)]
-            #valid_vals = interp[np.isfinite(interp)].astype(np.float64)
 
-            if valid_vals.size == 0:
-                return []
+            title1 = f"T{t_index+1} | Alt: {self.animator.levels[z]} km"
+            title2 = f"T{t_index+1} | Alt: {self.animator.levels[z]} km (Zoom)"
 
-            min_val, max_val = np.nanmin(valid_vals), np.nanmax(valid_vals)
-            log_cutoff = 1e-3
-            use_log = min_val > log_cutoff and (max_val / (min_val + 1e-6)) > 100
-
-            levels = np.logspace(np.log10(log_cutoff), np.log10(max_val), 20) if use_log else np.linspace(0, max_val, 20)
-            data_for_plot = np.where(interp > log_cutoff, interp, np.nan) if use_log else interp
-            scale_label = "Log" if use_log else "Linear"
-
-            title1 = f"T{t_index + 1} | Alt: {self.animator.levels[z_index]} km (Full - {scale_label})"
-            title2 = f"T{t_index + 1} | Alt: {self.animator.levels[z_index]} km (Zoom - {scale_label})"
-
-            c1 = self._plot_frame(ax1, data_for_plot, self.animator.lons, self.animator.lats, title1, levels, scale_label, proj)
-            self._plot_frame(ax2, zoom_plot, lon_zoom, lat_zoom, title2, levels, scale_label, proj)
+            c = self._plot_frame(ax1, interp, self.lon_grid_global, self.lat_grid_global, title1, levels, "Linear", proj)
+            self._plot_frame(ax2, zoom_plot, lon_zoom, lat_zoom, title2, levels, "Linear", proj)
 
             self._add_country_labels(ax1, [self.lon_min, self.lon_max, self.lat_min, self.lat_max])
             self._add_country_labels(ax2, [lon_min, lon_max, lat_min, lat_max])
@@ -432,48 +464,80 @@ class Plot_3DField_Data:
             if self.include_metadata:
                 self._draw_metadata_sidebar(fig, meta)
 
-            if not hasattr(update, "colorbar"):
-                update.colorbar = fig.colorbar(c1, ax=[ax1, ax2], orientation='vertical',
-                                                label="Ash concentration (g/m³)", shrink=0.75)
-                formatter = mticker.FuncFormatter(lambda x, _: f'{x:.2g}')
-                update.colorbar.ax.yaxis.set_major_formatter(formatter)
-
             if np.nanmax(valid_vals) > self.threshold:
                 ax1.contour(self.animator.lons, self.animator.lats, interp, levels=[self.threshold],
-                            colors='red', linewidths=2, transform=proj)
+                                colors='yellow', linewidths=2, transform=proj)
                 ax2.contour(lon_zoom, lat_zoom, zoom_plot, levels=[self.threshold],
-                            colors='red', linewidths=2, transform=proj)
+                                colors='yellow', linewidths=2, transform=proj)
 
-            
+                
                 ax2.text(0.99, 0.01, f"⚠ Max Thresold Exceed: {np.nanmax(valid_vals):.2f} > {self.threshold} g/m³",
-                            transform=ax2.transAxes, ha='right', va='bottom',
-                            fontsize=9, color='red',
-                            bbox=dict(facecolor='white', alpha=0.8, edgecolor='red'))
+                                transform=ax2.transAxes, ha='right', va='bottom',
+                                fontsize=9, color='yellow',
+                                bbox=dict(facecolor='k', alpha=0.8, edgecolor='yellow'))
+           
+             # Threshold contours
+            thresholds = {
+                "Low": 0.002,
+                "Medium": 0.004
+            }
+            threshold_colors = {
+                "Low": "yellow",
+                "Medium": "orange",
+                "High": "red"
+            }
+
+            # >4 mg/m³ (high risk)
+            ax1.contour(
+                self.lon_grid_global, self.lat_grid_global, interp,
+                levels=[thresholds["Medium"]],
+                colors=[threshold_colors["High"]],
+                linewidths=2, transform=proj
+            )
+            ax2.contour(
+                lon_zoom, lat_zoom, zoom_plot,
+                levels=[thresholds["Medium"]],
+                colors=[threshold_colors["High"]],
+                linewidths=2, transform=proj
+            )
+
+            # >2 mg/m³ (caution)
+            ax1.contour(
+                self.lon_grid_global, self.lat_grid_global, interp,
+                levels=[thresholds["Low"]],
+                colors=[threshold_colors["Medium"]],
+                linewidths=2, transform=proj
+            )
+            ax2.contour(
+                lon_zoom, lat_zoom, zoom_plot,
+                levels=[thresholds["Low"]],
+                colors=[threshold_colors["Medium"]],
+                linewidths=2, transform=proj
+            )
+
+            # Legend
+            handles = [
+                plt.Line2D([0], [0], color=threshold_colors["Medium"], lw=2, label=">2 mg/m³ caution"),
+                plt.Line2D([0], [0], color=threshold_colors["High"], lw=2, label=">4 mg/m³ high risk")
+            ]
+            ax2.legend(handles=handles, loc="upper right", fontsize=8, title="Ash thresholds")
+
+            if not hasattr(update, "colorbar"):
+                update.colorbar = fig.colorbar(c, ax=[ax1, ax2], orientation="vertical")
+                update.colorbar.set_label("Ash concentration (g/m³)")
+            
+            
             return []
 
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        #fig.set_size_inches(18, 7)
-        fig.tight_layout(rect=[0.02, 0.02, 0.98, 0.98])
-        ani = animation.FuncAnimation(fig, update, frames=z_indices_with_data, blit=False, cache_frame_data =False)
+        self._make_dirs(output_path)
+        fig.tight_layout()
+        ani = animation.FuncAnimation(fig, update, frames=valid_z, blit=False, cache_frame_data=False, interval =20)
+        ani.save(output_path, writer="pillow", fps=self.fps, dpi=100)   
+        #ani.save(output_path + ".mp4", writer="ffmpeg", fps=self.fps, dpi=200)
+        plt.close()
+        print(f"✅ Saved altitude animation for T{t_index+1} to {output_path}")
         
-        if not z_indices_with_data:
-            print(f"❌ No valid frames to animate for T={t_index}.")
-            plt.close()
-        else:
 
-            ani.save(output_path, writer='pillow', fps=self.fps, dpi=200)
-            plt.close()
-            print(f"✅ Saved vertical profile animation for T{t_index + 1} to {output_path}")
-
-
-
-    # def animate_all_altitude_profiles(self, output_folder='altitude_profiles'):
-    #     output_folder = os.path.join(self.output_dir, "altitude_profiles")
-    #     os.makedirs(output_folder, exist_ok=True)
-    #     for t_index in range(len(self.animator.datasets)):
-    #         output_path = os.path.join(output_folder, f"vertical_T{t_index + 1:02d}.gif")
-    #         print(f"🔄 Generating vertical profile animation for T{t_index + 1}...")
-    #         self.animate_altitude(t_index, output_path)
 
     def animate_all_altitude_profiles(self, output_folder='altitude_profiles'):
         output_folder = os.path.join(self.output_dir, "altitude_profiles")
@@ -506,65 +570,102 @@ class Plot_3DField_Data:
         output_folder = os.path.join(self.output_dir, "frames")
         os.makedirs(output_folder, exist_ok=True)
         meta = self.animator.datasets[0].attrs
-        legend_text = "\\n".join([
-            f"Run name:        {meta.get('run_name', 'N/A')}",
-            f"Run time:        {meta.get('run_time', 'N/A')}",
-            f"Met data:        {meta.get('met_data', 'N/A')}",
-            f"Start release:   {meta.get('start_of_release', 'N/A')}",
-            f"End release:     {meta.get('end_of_release', 'N/A')}",
-            f"Strength:        {meta.get('source_strength', 'N/A')} g/s",
-            f"Location:        {meta.get('release_location', 'N/A')}",
-            f"Height:          {meta.get('release_height', 'N/A')} m asl",
-            f"Duration:        {meta.get('run_duration', 'N/A')}"
-        ])
+
         for z_index, z_val in enumerate(self.animator.levels):
             z_dir = os.path.join(output_folder, f"Z{z_val:.1f}km")
             os.makedirs(z_dir, exist_ok=True)
             for t in range(len(self.animator.datasets)):
                 data = self.animator.datasets[t]['ash_concentration'].values[z_index]
-                interp = interpolate_grid(data, self.animator.lon_grid, self.animator.lat_grid)
-                if not np.isfinite(interp).any():
-                    continue
+                interp = interpolate_grid(data,  self.lon_grid_global, self.lat_grid_global)
+                interp = np.where(np.isnan(interp), 0, interp)
+
+                min_val = np.nanmin(interp)
+                max_val = np.nanmax(interp)
+
+                if not np.isfinite(min_val):
+                    min_val = 0
+                if not np.isfinite(max_val):
+                    max_val = 0
+
+                if min_val == max_val:
+                    levels = [0, 1]
+                else:
+                    levels = np.linspace(min_val, max_val, 20)
+
                 fig = plt.figure(figsize=(16, 8))
                 proj = ccrs.PlateCarree()
                 ax1 = fig.add_subplot(1, 2, 1, projection=proj)
                 ax2 = fig.add_subplot(1, 2, 2, projection=proj)
-                valid_vals = interp[np.isfinite(interp)]
-                min_val, max_val = np.nanmin(valid_vals), np.nanmax(valid_vals)
-                log_cutoff = 1e-3
-                use_log = min_val > log_cutoff and (max_val / (min_val + 1e-6)) > 100
-                levels = np.logspace(np.log10(log_cutoff), np.log10(max_val), 20) if use_log else np.linspace(0, max_val, 20)
-                data_for_plot = np.where(interp > log_cutoff, interp, np.nan) if use_log else interp
-                scale_label = "Log" if use_log else "Linear"
+
                 center_lat, center_lon = self._get_max_concentration_location()
                 lat_idx, lon_idx, lon_min, lon_max, lat_min, lat_max = self._get_zoom_indices(center_lat, center_lon)
                 zoom_plot = interp[np.ix_(lat_idx, lon_idx)]
                 lon_zoom = self.animator.lons[lon_idx]
                 lat_zoom = self.animator.lats[lat_idx]
-                c1 = self._plot_frame(ax1, data_for_plot, self.animator.lons, self.animator.lats,
-                                      f"T{t+1} | Alt: {z_val} km (Full - {scale_label})", levels, scale_label, proj)
+
+                c = self._plot_frame(ax1, interp, self.lon_grid_global, self.lat_grid_global,
+                                    f"T{t+1} | Alt: {z_val} km", levels, "Linear", proj)
                 self._plot_frame(ax2, zoom_plot, lon_zoom, lat_zoom,
-                                 f"T{t+1} | Alt: {z_val} km (Zoom - {scale_label})", levels, scale_label, proj)
-                self._add_country_labels(ax1, [self.animator.lons.min(), self.animator.lons.max(),
-                                               self.animator.lats.min(), self.animator.lats.max()])
+                                f"T{t+1} | Alt: {z_val} km (Zoom)", levels, "Linear", proj)
+
+                self._add_country_labels(ax1, [self.lon_min, self.lon_max, self.lat_min, self.lat_max])
                 self._add_country_labels(ax2, [lon_min, lon_max, lat_min, lat_max])
                 
-                if np.nanmax(valid_vals) > self.threshold:
-                    ax1.contour(self.animator.lons, self.animator.lats, interp, levels=[self.threshold],
-                                colors='red', linewidths=2, transform=proj)
-                    ax2.contour(lon_zoom, lat_zoom, zoom_plot, levels=[self.threshold],
-                                colors='red', linewidths=2, transform=proj)
-                    ax2.text(0.99, 0.01, f"⚠ Max: {np.nanmax(valid_vals):.2f} > {self.threshold} g/m³",
-                             transform=ax2.transAxes, ha='right', va='bottom',
-                             fontsize=9, color='red',
-                             bbox=dict(facecolor='white', alpha=0.8, edgecolor='red'))
+                 # Threshold contours
+                thresholds = {
+                    "Low": 0.002,
+                    "Medium": 0.004
+                }
+                threshold_colors = {
+                    "Low": "yellow",
+                    "Medium": "orange",
+                    "High": "red"
+                }
+
+                # >4 mg/m³ (high risk)
+                ax1.contour(
+                    self.lon_grid_global, self.lat_grid_global, interp,
+                    levels=[thresholds["Medium"]],
+                    colors=[threshold_colors["High"]],
+                    linewidths=2, transform=proj
+                )
+                ax2.contour(
+                    lon_zoom, lat_zoom, zoom_plot,
+                    levels=[thresholds["Medium"]],
+                    colors=[threshold_colors["High"]],
+                    linewidths=2, transform=proj
+                )
+
+                # >2 mg/m³ (caution)
+                ax1.contour(
+                    self.lon_grid_global, self.lat_grid_global, interp,
+                    levels=[thresholds["Low"]],
+                    colors=[threshold_colors["Medium"]],
+                    linewidths=2, transform=proj
+                )
+                ax2.contour(
+                    lon_zoom, lat_zoom, zoom_plot,
+                    levels=[thresholds["Low"]],
+                    colors=[threshold_colors["Medium"]],
+                    linewidths=2, transform=proj
+                )
+
+                # Legend
+                handles = [
+                    plt.Line2D([0], [0], color=threshold_colors["Medium"], lw=2, label=">2 mg/m³ caution"),
+                    plt.Line2D([0], [0], color=threshold_colors["High"], lw=2, label=">4 mg/m³ high risk")
+                ]
+                ax2.legend(handles=handles, loc="upper right", fontsize=8, title="Ash thresholds")
+
+               
+
                 if include_metadata:
                     self._draw_metadata_sidebar(fig, meta)
-                cbar = fig.colorbar(c1, ax=[ax1, ax2], orientation='vertical', shrink=0.75, pad=0.03)
+
+                cbar = fig.colorbar(c, ax=[ax1, ax2], orientation="vertical")
                 cbar.set_label("Ash concentration (g/m³)")
-                formatter = mticker.FuncFormatter(lambda x, _: f'{x:.2g}')
-                cbar.ax.yaxis.set_major_formatter(formatter)
+
                 frame_path = os.path.join(z_dir, f"frame_{t+1:04d}.jpg")
-                plt.savefig(frame_path, bbox_inches='tight')
+                plt.savefig(frame_path, bbox_inches="tight")
                 plt.close()
                 print(f"📸 Saved {frame_path}")

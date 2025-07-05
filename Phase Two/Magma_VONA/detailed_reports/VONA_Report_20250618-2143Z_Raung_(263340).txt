@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-06-18 15:23:32 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/17445?signature=04d057d0bbf8f486043a8ea5e1dff10b50aec91d994f5a7a492e4724b0725ed6
+================================================================================
+
+Issued              : 20250618/2143Z
+Volcano             : Raung (263340)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Raung Volcano Observatory
+Notice Number       : 2025RAU030
+Volcano Location    : S 08 deg 07 min 30 sec E 114 deg 02 min 31 sec
+Area                : East java, Indonesia
+Summit Elevation    : 10662 FT (3332 M)
+Volcanic Activity Summary: Eruption with volcanic ash cloud at 2143 UTC (0443 local).
+Volcanic Cloud Height: Best estimate of ash-cloud top is around 17062 FT (5332 M) above sea level or 6400 FT (2000 M) above summit. May be higher than what can be observed clearly. Source of height data: ground observer.
+Other Volcanic Cloud Information: Ash cloud moving from southeast to south. Volcanic ash is observed to be gray. The intensity of volcanic ash is observed to be medium.
+Remarks             : Tremor recorded on seismogram with maximum amplitude 4 mm.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.125
+Longitude           : 114.04194444444444
+AshCloudHeight_ASL  : 5332
+AshCloudHeight_AGL  : 2000
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

@@ -13,3 +13,6 @@ adjustText
 #basemap-data-hires
 imageio
 basemap
+xarray==2024.3.0
+numpy==1.24.0
+

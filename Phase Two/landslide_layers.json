@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Topsoil",
+    "color": [
+      165,
+      42,
+      42
+    ],
+    "density": 1800,
+    "stiffness": 3000,
+    "stretch_limit": 1.1
+  },
+  {
+    "name": "Weathered Rock",
+    "color": [
+      210,
+      180,
+      140
+    ],
+    "density": 2200,
+    "stiffness": 5000,
+    "stretch_limit": 1.2
+  },
+  {
+    "name": "Bedrock",
+    "color": [
+      105,
+      105,
+      105
+    ],
+    "density": 2700,
+    "stiffness": 10000,
+    "stretch_limit": 1.5
+  }
+]

@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-06-23 23:14:35 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/17530?signature=b497d7835e944f2853242dd8cd336b4208a7b18507eaa5dab55dd5304e6907e5
+================================================================================
+
+Issued              : 20250622/2229Z
+Volcano             : Semeru (263300)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Semeru Volcano Observatory
+Notice Number       : 2025SMR2294
+Volcano Location    : S 08 deg 06 min 29 sec E 112 deg 55 min 12 sec
+Area                : East java, Indonesia
+Summit Elevation    : 11763 FT (3676 M)
+Volcanic Activity Summary: Eruption at 2229 UTC (0529 local).
+Volcanic Cloud Height: Ash-cloud is not observed.
+Other Volcanic Cloud Information: Ash-cloud is not observed.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 22 mm and maximum duration 99 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.108055555555556
+Longitude           : 112.92
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================

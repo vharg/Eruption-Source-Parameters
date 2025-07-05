@@ -1,0 +1,16 @@
+simulationStartDatetime 20250625_0351
+simulationDurationInHour 168
+volcanoName Ili_Lewotolok__264230_
+volcanoX 123.505
+volcanoY -8.271944444444445
+summitHeightInMetre 1423
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+emissionSourceParameterSet TO_BE_UPDATED
+
+# Row 0
+emissionSourceParameterSet_1 700_19_50_2025_06_25_03_51

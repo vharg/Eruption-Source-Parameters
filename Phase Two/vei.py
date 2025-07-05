@@ -888,31 +888,13 @@ class LOADDATA:
         A filtered dataframe containing matching rows and a list of VEI values in descending order.
 
         Example:
-        # Search by Volcano Number (unique ID):
-        search_whelley_2015(Volcano_Number=345060)
-
+       
         # Search by Volcano name:
         search_whelley_2015(Volcano="Mount St. Helens")
 
         # Search by geographic coordinates:
         search_whelley_2015(coordinates=(45.1, -122.2))
 
-        # Search by elevation range:
-        search_whelley_2015(Elevation_m=(2500, 3000))
-
-        # Search by volcano classification:
-        search_whelley_2015(Classification="Stratovolcano")
-
-        # Search by Volcanic Explosivity Index (VEI):
-        search_whelley_2015(VEI_5=1)
-
-        Columns available for search:
-        - 'Volcano Number': Search by unique volcano identification number.
-        - 'Volcano': Search by the volcano's name.
-        - 'Latitude' and 'Longitude': Search by geographic coordinates (e.g., coordinates=(45.1, -122.2)).
-        - 'Elevation (m)': Search by elevation range or specific value.
-        - 'Classification': Search by volcano classification.
-        - 'VEI X' (e.g., 'VEI 5'): Search by Volcanic Explosivity Index values.
         """
         df = self.datasets.get("whelley_2015")
         df = df.drop(columns=['VEI 1'])
@@ -947,7 +929,34 @@ class LOADDATA:
 
         vei_values = non_zero_vei.index.str.extract(r'(\d+)')[0].astype(int).tolist()
 
+        
+        ##############
+        
+        vei_cols = non_zero_vei.index.tolist()
+
+        # Create a boolean mask where only rows that have non-zero values in exactly the same VEI columns are kept
+        def matches_exact_vei(row):
+            return all((row[col] > 0) for col in vei_cols) and all(
+                (row[col] == 0) for col in vei_columns if col not in vei_cols
+            )
+
+        matched_rows = df[df[vei_columns].apply(matches_exact_vei, axis=1)]
+
+        if matched_rows.empty:
+            print("No rows match exactly the non-zero VEI columns.")
+            return df.iloc[0:0], vei_values  # Return empty df
+
+        # Return only the first match
+        df = matched_rows.iloc[[0]]
+        
+        
+        ###########
+        
+        
         print(f"Top VEI values returned: {vei_values}")
+        
+        
+        
         return df, vei_values
 
     

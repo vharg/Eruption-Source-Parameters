@@ -53,14 +53,29 @@ An interactive dashboard for uploading, processing, analyzing, and visualizing v
 
 ## 🚀 How to Use
 
-1. Launch the dashboard:
-   ```bash
-   panel serve app.py --show
-   ```
-2. Upload a NAME ZIP file.
-3. Use the 2D/3D tabs to customize and generate visualizations.
-4. Explore results in the Media Viewer.
-5. Download animations, images, or logs.
+1. **Launch the Dashboard**
+
+   1. **Open the Anaconda Command Prompt**  
+      Navigate to the `Phase Three` folder.
+
+   2. **Start the Application**  
+      Type the command below. A new web page containing the web application will open.
+
+      ```bash
+      panel serve app.py --show --autoreload
+      ```
+
+   3. **Access Help**  
+      Click the **Help** tab to read the instructions on how to use the software.
+
+2. **Upload a NAME ZIP file.**
+
+3. **Use the 2D/3D tabs to customize and generate visualizations.**
+
+4. **Explore results in the Media Viewer.**
+
+5. **Download animations, images, or logs.**
+
 
 ---
 
@@ -103,19 +118,6 @@ Taal_273070_20200112_scenario_1.zip
        ▼
 4. Export and Download Results
 ```
-
----
-
-## 🚀 How to Use
-
-1. Launch the dashboard:
-   ```bash
-   panel serve app.py --show
-   ```
-2. Upload a NAME ZIP file.
-3. Use the 2D/3D tabs to customize and generate visualizations.
-4. Explore results in the Media Viewer.
-5. Download animations, images, or logs.
 
 ---
 

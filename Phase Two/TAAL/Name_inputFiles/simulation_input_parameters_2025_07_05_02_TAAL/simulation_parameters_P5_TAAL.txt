@@ -1,0 +1,22 @@
+simulationStartDatetime 20250705_0200
+simulationDurationInHour 168
+volcanoName TAAL
+volcanoX 120.993333
+volcanoY 14.001666
+summitHeightInMetre 311
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+emissionSourceParameterSet TO_BE_UPDATED
+
+# VEI 2
+emissionSourceParameterSet_1 5764_2_53_2025_07_05_02_00
+
+# VEI 3
+emissionSourceParameterSet_2 8925_1_35_2025_07_05_02_00
+
+# VEI 4
+emissionSourceParameterSet_3 13441_0_45_2025_07_05_02_00

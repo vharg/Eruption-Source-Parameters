@@ -89,7 +89,7 @@ class VEI_BulkVolume_Mass:
         # 🔥 Define VEI Levels First!
         self.vei_levels = list(range(9))  # VEI levels from 0 to 8
 
-        # 🔥 Convert BULK_VOLUME_RANGES into a List of Tuples
+        # 🔥 Convert BULK_VOLUME_RANGES into a List of Tuples # Common VEI defintions
         self.bulk_volume_ranges = [
             (0, 1e-05),
             (1e-05, 0.001),

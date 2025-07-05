@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-06-18 15:23:32 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/17428?signature=0bb56d21cf67c13a2de0e3ae5251e47e29240915fb1e1cccd5e064a0d73f6027
+================================================================================
+
+Issued              : 20250618/0659Z
+Volcano             : Semeru (263300)
+Current Aviation Colour Code: ORANGE
+Previous Aviation Colour Code: orange
+Source              : Semeru Volcano Observatory
+Notice Number       : 2025SMR2236
+Volcano Location    : S 08 deg 06 min 29 sec E 112 deg 55 min 12 sec
+Area                : East java, Indonesia
+Summit Elevation    : 11763 FT (3676 M)
+Volcanic Activity Summary: Eruption at 0659 UTC (1359 local).
+Volcanic Cloud Height: Ash-cloud is not observed.
+Other Volcanic Cloud Information: Ash-cloud is not observed.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 19 mm and maximum duration 116 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -8.108055555555556
+Longitude           : 112.92
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================
