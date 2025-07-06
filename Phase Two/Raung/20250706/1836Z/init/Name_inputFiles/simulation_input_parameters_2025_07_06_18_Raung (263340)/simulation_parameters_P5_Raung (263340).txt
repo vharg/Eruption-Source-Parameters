@@ -1,0 +1,16 @@
+simulationStartDatetime 20250706_1836
+simulationDurationInHour 168
+volcanoName Raung__263340_
+volcanoX 114.04194444444444
+volcanoY -8.125
+summitHeightInMetre 3332
+simulationDomain_xMin 90.0
+simulationDomain_xMax 160.0
+simulationDomain_yMin -15.0
+simulationDomain_yMax 40.0
+outputGridSize_dX 0.25
+outputGridSize_dY 0.25
+emissionSourceParameterSet TO_BE_UPDATED
+
+# VEI 2
+emissionSourceParameterSet_1 5740_1_0_2025_07_06_18_36

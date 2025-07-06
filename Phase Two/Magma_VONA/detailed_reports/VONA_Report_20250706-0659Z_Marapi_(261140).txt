@@ -1,0 +1,33 @@
+================================================================================
+ 🌋 VOLCANO OBSERVATORY NOTICE FOR AVIATION (VONA) REPORT 🌋 
+================================================================================
+Generated on: 2025-07-06 15:12:07 UTC
+Retrieved using Python automation | Real-time data extraction
+For more information, contact: Dr. Mahmud Muhammad (mahmud.muhammad@hotmail.com)
+================================================================================
+🔗 Source URL: https://magma.esdm.go.id/v1/vona/17694?signature=d2b2fce6ad3082677680abec0f76f7f2a5935064f61f90c109ddbb0cfef33b6e
+================================================================================
+
+Issued              : 20250706/0659Z
+Volcano             : Marapi (261140)
+Current Aviation Colour Code: YELLOW
+Previous Aviation Colour Code: yellow
+Source              : Marapi Volcano Observatory
+Notice Number       : 2025MAR051
+Volcano Location    : S 0 deg 22 min 52 sec E 100 deg 28 min 23 sec
+Area                : West Sumatra, Indonesia
+Summit Elevation    : 9251 FT (2891 M)
+Volcanic Activity Summary: Increasing in volcanic activity.
+Volcanic Cloud Height: Ash-cloud is not observed.
+Other Volcanic Cloud Information: Ash-cloud is not observed.
+Remarks             : Eruption recorded on seismogram with maximum amplitude 30.1 mm and maximum duration 46 second.
+Contacts            : Center for Volcanology and Geological Hazard Mitigation (CVGHM).Tel: +62-22-727-2606.Facsimile: +62-22-720-2761.email : pvmbg@esdm.go.id
+Next Notice         : A new VONA will be issued if conditions change significantly or the colour code is changes.Latest Volcanic information is posted atVONA | MAGMA IndonesiaWebsite.Link:https://magma.esdm.go.id/v1/vona
+Latitude            : -0.38111111111111107
+Longitude           : 100.47305555555556
+AshCloudHeight_ASL  : None
+AshCloudHeight_AGL  : None
+
+================================================================================
+📌 This is an automated report. Please verify with official sources.
+================================================================================
