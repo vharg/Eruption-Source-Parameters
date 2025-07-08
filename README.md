@@ -14,6 +14,19 @@ This GitHub repository contains all scripts and tools developed as part of the O
 
 ```
 
+
+### 📹 Video Demonstrations
+
+The following videos provide a walkthrough of the functionalities across all three phases:
+
+- 🔸 [Phase 1: Probabilistic ESP sampling and VEI modeling](./Phase1.mp4)
+- 🔸 [Phase 2: Real-time automation using VONA, infrasound, satellite](./Phase2.mp4)
+- 🔸 [Phase 3: Visualization and probabilistic analysis of NAME outputs](./Phase3.mp4)
+
+> 💡 Click the links to download and view the demonstrations locally.
+
+
+
 ---
 
 ## 🛠 Installation Instructions

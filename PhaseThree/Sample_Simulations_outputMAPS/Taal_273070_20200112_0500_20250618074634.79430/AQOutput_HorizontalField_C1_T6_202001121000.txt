@@ -1,0 +1,52 @@
+ NAME III (version 8.2)                                          
+ Run name:                   Taal_273070_20250618074634.79430
+ Run time:                   18/06/2025 07:46:35.865 UTC
+ Met data:                   NWP Flow.EC HRES Flow
+ Start of release:           12/01/2020 08:30 UTC
+ End of release:             12/01/2020 16:30 UTC
+ Source strength:            Multiple Sources
+ Release location:           Multiple Sources
+ Release height:             Multiple Sources
+ Run duration:               7day 0hr 0min
+ X grid origin:                 90.00000    
+ Y grid origin:                -15.00000    
+ X grid size:                         281
+ Y grid size:                         221
+ X grid resolution:            0.2500000    
+ Y grid resolution:            0.2500000    
+ Number of preliminary cols:            4
+ Number of field cols:                  3
+ 
+ Fields:
+                        ,                        ,                        ,                        ,                  VOLCANIC,                  VOLCANIC,                  VOLCANIC,
+                        ,                        ,                        ,                        ,       HF_BLAvgAirConc Ash,        HF_DryDepoRate Ash,        HF_WetDepoRate Ash,
+                        ,                        ,                        ,                        ,         Air Concentration,       Dry deposition rate,       Wet deposition rate,
+                        ,                        ,                        ,                        ,              VOLCANIC_ASH,              VOLCANIC_ASH,              VOLCANIC_ASH,
+                        ,                        ,                        ,                        ,                   g / m^3,               g / (m^2 s),               g / (m^2 s),
+                        ,                        ,                        ,                        ,               All sources,               All sources,               All sources,
+                        ,                        ,                        ,                        ,     No ensemble averaging,     No ensemble averaging,     No ensemble averaging,
+                        ,                        ,                        ,                        ,          1hr 0min average,          1hr 0min average,          1hr 0min average,
+                        ,                        ,                        ,                        ,   No horizontal averaging,   No horizontal averaging,   No horizontal averaging,
+                        ,                        ,                        ,                        ,    Boundary layer average,                          ,                          ,
+                        ,                        ,                        ,                        ,                          ,                          ,                          ,
+                        ,                        ,                        ,                        ,                          ,                          ,                          ,
+                        ,                        ,                        ,                        ,                          ,                          ,                          ,
+                        ,                        ,                        ,                        ,      12/01/2020 10:00 UTC,      12/01/2020 10:00 UTC,      12/01/2020 10:00 UTC,
+                        ,                        ,                        ,                        ,                          ,                          ,                          ,
+                 X Index,                 Y Index,            X (Lat-Long),            Y (Lat-Long),                          ,                          ,                          ,
+                     124,                     117,                  120.75,                      14,               0.001362239,              0.0001853428,              0.0002228697,
+                     124,                     119,                  120.75,                    14.5,                         0,                         0,               3.28654E-06,
+                     124,                     120,                  120.75,                   14.75,                         0,                         0,              9.982733E-06,
+                     124,                     121,                  120.75,                      15,                         0,                         0,              2.544711E-06,
+                     124,                     122,                  120.75,                   15.25,                         0,                         0,              3.746206E-06,
+                     124,                     123,                  120.75,                    15.5,                         0,                         0,              1.484426E-06,
+                     125,                     116,                     121,                   13.75,              0.0003433545,              4.200391E-05,              0.0003312559,
+                     125,                     117,                     121,                      14,                0.01372092,               0.001741251,                 0.0504497,
+                     125,                     118,                     121,                   14.25,                         0,                         0,              0.0005273081,
+                     125,                     119,                     121,                    14.5,                         0,                         0,              1.228672E-05,
+                     125,                     120,                     121,                   14.75,                         0,                         0,              7.526784E-05,
+                     125,                     121,                     121,                      15,                         0,                         0,              4.390725E-05,
+                     126,                     116,                  121.25,                   13.75,                         0,                         0,              2.636477E-06,
+                     126,                     117,                  121.25,                      14,                         0,                         0,              4.356808E-06,
+                     126,                     120,                  121.25,                   14.75,                         0,                         0,              8.274625E-07,
+                     126,                     121,                  121.25,                      15,                         0,                         0,              4.894841E-06,

@@ -1,0 +1,52 @@
+ NAME III (version 8.2)                                          
+ Run name:                   Taal_273070_20250618074634.79430
+ Run time:                   18/06/2025 07:46:35.865 UTC
+ Met data:                   NWP Flow.EC HRES Flow
+ Start of release:           12/01/2020 08:30 UTC
+ End of release:             12/01/2020 16:30 UTC
+ Source strength:            Multiple Sources
+ Release location:           Multiple Sources
+ Release height:             Multiple Sources
+ Run duration:               7day 0hr 0min
+ X grid origin:                 90.00000    
+ Y grid origin:                -15.00000    
+ X grid size:                         281
+ Y grid size:                         221
+ X grid resolution:            0.2500000    
+ Y grid resolution:            0.2500000    
+ Number of preliminary cols:            4
+ Number of field cols:                  1
+ 
+ Fields:
+                        ,                        ,                        ,                        ,                  VOLCANIC,
+                        ,                        ,                        ,                        ,               AirConc Ash,
+                        ,                        ,                        ,                        ,         Air Concentration,
+                        ,                        ,                        ,                        ,              VOLCANIC_ASH,
+                        ,                        ,                        ,                        ,                   g / m^3,
+                        ,                        ,                        ,                        ,               All sources,
+                        ,                        ,                        ,                        ,     No ensemble averaging,
+                        ,                        ,                        ,                        ,          1hr 0min average,
+                        ,                        ,                        ,                        ,   No horizontal averaging,
+                        ,                        ,                        ,                        ,     No vertical averaging,
+                        ,                        ,                        ,                        ,                          ,
+                        ,                        ,                        ,                        ,                          ,
+                        ,                        ,                        ,                        ,                          ,
+                        ,                        ,                        ,                        ,      16/01/2020 11:00 UTC,
+                        ,                        ,                        ,                        ,           Z = 11000 m agl,
+                        ,                        ,                        ,                        ,                          ,
+                 X Index,                 Y Index,            X (Lat-Long),            Y (Lat-Long),                          ,
+                     214,                     139,                  143.25,                    19.5,              5.868249E-05,
+                     215,                     139,                   143.5,                    19.5,              5.868249E-05,
+                     215,                     140,                   143.5,                   19.75,              5.877362E-05,
+                     216,                     140,                  143.75,                   19.75,              5.877362E-05,
+                     264,                     163,                  155.75,                    25.5,              4.866108E-09,
+                     265,                     163,                     156,                    25.5,              4.866108E-09,
+                     266,                     163,                  156.25,                    25.5,              4.866108E-09,
+                     267,                     164,                   156.5,                   25.75,              4.876292E-09,
+                     274,                     164,                  158.25,                   25.75,               2.38241E-31,
+                     275,                     164,                   158.5,                   25.75,               2.38241E-31,
+                     276,                     164,                  158.75,                   25.75,               2.38241E-31,
+                     278,                     163,                  159.25,                    25.5,              2.872553E-23,
+                     278,                     164,                  159.25,                   25.75,               2.38241E-31,
+                     279,                     163,                   159.5,                    25.5,              2.872553E-23,
+                     280,                     163,                  159.75,                    25.5,              2.872553E-23,
