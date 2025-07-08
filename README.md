@@ -162,7 +162,7 @@ ash_predictions = psize_model.predict_with_uncertainty(mer_results['MERPercentil
 
 Phase Two automates monitoring and updating of eruption parameters using real-time VONA messages.
 
-#### 🧪 Usage via Notebook (`Phase_Two.ipynb`) or Script
+#### 🧪 Usage via Notebook (`Phase2_updated.ipynb`) or Script
 
 1. **Live Monitoring Loop with ESP Updates:**
 ```python
