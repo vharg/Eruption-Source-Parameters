@@ -306,9 +306,10 @@ while True:
 ```
 ------------------------------------------------------------------------------------------------
 
+
 ### 🔹 Phase Three: Visualization and Probabilistic Analysis via Panel Dashboard
 
-This phase provides a web-based interactive application for processing and visualizing outputs from NAME model simulations.
+This phase provides a web-based interactive application for processing and visualizing outputs from NAME model simulations, including exceedance probability analysis.
 
 #### 🖥 Usage via `app.py` Dashboard
 
@@ -325,7 +326,56 @@ panel serve app.py --autoreload --show
 3. **Tabs Available:**
 - **3D Field Tab:** Animate and export maps by altitude and time
 - **2D Field Tab:** Visualize air concentration, dry and wet deposition
-- **Bayesian Analysis Tab:** Run exceedance probability analysis using posterior sampling
+- **Probability Analysis Tab:** Run ensemble-based exceedance maps using user-defined thresholds
+- **Media Viewer Tab:** Browse and download `.gif`, `.jpg`, `.nc`, and `.zip` products
+
+---
+
+## 🗂 Input Format
+
+Example input ZIP for dashboard:
+
+```
+Taal_273070_20200112_scenario_1.zip
+├── AQOutput_3DField_*.txt
+├── AQOutput_horizontal_*.txt
+```
+
+---
+
+## 💾 Output Examples
+
+```bash
+media/
+├── 3D/
+│   └── ash_altitude10km_runTimes.gif
+├── 2D/
+│   └── air_concentration.gif
+├── Probability_3D/
+│   └── ash_concentration_probability_0.02.gif
+├── Probability_2D/
+│   ├── air_concentration_probability_0.00001.gif
+│   ├── dry_deposition_rate_probability_0.00001.gif
+├── all_exports.zip
+└── app_errors.log
+```
+
+#### 🖥 Usage via `app.py` Dashboard
+
+1. **Start the Dashboard:**
+```bash
+panel serve app.py --autoreload --show
+```
+
+2. **Workflow Inside the App:**
+- **Step 1 (Optional):** Upload a `.zip` containing `AQOutput_3DField_*.txt` and `AQOutput_horizontal_*.txt`
+- **Step 2 (Required):** Click `Process ZIP`
+- **Step 3 (Optional):** Download plots, animations, or sample ZIPs
+
+3. **Tabs Available:**
+- **3D Field Tab:** Animate and export maps by altitude and time
+- **2D Field Tab:** Visualize air concentration, dry and wet deposition
+- **Probability Analysis Tab:** Compute exceedance probability maps using the `ProbabilityProcessor` module
 - **Media Viewer Tab:** Browse and download `.gif`, `.jpg`, and `.zip` products
 
 
@@ -364,7 +414,7 @@ media/
 Each script includes detailed docstrings explaining:
 - Inputs and outputs
 - Data sources used (e.g., Whelley et al., VAAC)
-- Bayesian methods and regression logic
+- ensemble-based probability mapping and regression logic
 
 
 ---
