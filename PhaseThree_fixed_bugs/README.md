@@ -1,4 +1,3 @@
-
 # 🌋 Volcanic Ash Dispersion Analysis & Visualization Suite
 
 This suite of Python tools provides comprehensive capabilities for processing, analyzing, and visualizing outputs from the **NAME (Numerical Atmospheric-dispersion Modelling Environment)** software. It includes both command-line modules and an interactive web-based dashboard.
@@ -8,84 +7,55 @@ This suite of Python tools provides comprehensive capabilities for processing, a
 ## 📚 Overview
 
 - **Web Dashboard** – An interactive app built with Panel for visual exploration and export of NAME simulation results.
+- **Probability Processor** – A backend module for computing and visualizing exceedance probability maps across multiple simulations.
 
 ---
-
-
-# Volcanic Ash Dispersion Visualization and Analysis Toolkit
-
-This Python-based toolkit is designed for the visualization, interpolation, and analysis of **volcanic ash dispersion simulations** produced by the **NAME** (Numerical Atmospheric-dispersion Modelling Environment) software. It includes modules for rendering 2D and 3D animations, creating vertical and horizontal cross-sections, exporting results, and conducting scientific analyses on ash concentration fields.
-
----
-
 
 ## ✅ Requirements
 
 - Python 3.7+
 - Required packages:
-  - `matplotlib`
-  - `numpy`
-  - `scipy`
-  - `cartopy` or `basemap`
-  - `netCDF4`
+  ```bash
+  pip install panel xarray numpy matplotlib netCDF4 cartopy
+  ```
 
-Install dependencies with:
-```bash
-pip install -r requirements.txt
-```
-
-
+---
 
 ## 🛰 About NAME
 
 This software works with simulation outputs from the **Numerical Atmospheric-dispersion Modelling Environment (NAME)**, developed by the UK Met Office. NAME is widely used for modeling the dispersion of volcanic ash and other airborne pollutants.
 
-
-
----
-
-
-# 🌋 NAME Ash Dispersion Visualizer Dashboard
-
-An interactive dashboard for uploading, processing, analyzing, and visualizing volcanic ash dispersion model outputs from the **NAME** software. Built with **Panel**, **Xarray**, and **Matplotlib**, this tool supports processing 2D and 3D data processing, statistical Bayesian exceedance probability maps, and downloadable outputs.
-
 ---
 
 ## 🚀 How to Use
 
-1. Launch the dashboard:
+1. **Launch the Dashboard**  
    ```bash
-   panel serve app.py --autoreload --show                                                                                    
+   panel serve app.py --show --autoreload
    ```
-2. Upload a NAME ZIP file.
-3. Use the 2D/3D tabs to customize and generate visualizations.
-4. Explore results in the Media Viewer.
-5. Download animations, images, or logs.
+
+2. **Upload a NAME ZIP file** containing `.txt` model outputs.
+
+3. **Use dashboard tabs** to:
+   - View 3D and 2D animations
+   - Analyze threshold exceedance probabilities
+   - Download media outputs
+
+4. **Access the Help tab** for usage instructions.
 
 ---
 
 ## ✨ Features
 
-- 📦 Upload and process ZIP archives containing NAME model outputs
-- 🎞 Generate animated visualizations:
+- 📦 Upload and process `.zip` archives of NAME model outputs
+- 🎞 Create visualizations:
   - 3D ash concentration at various altitude levels
   - Vertical profiles over time
-  - 2D surface fields like air concentration and deposition rates
-- 📊 Bayesian exceedance probability maps for  2D and 3D field data
-- 📁 Media viewer with previews and download options
-- 🪵 Error logging and session restoration
-
----
-
-## 🗂 Input Format
-
-Upload a ZIP file containing **raw NAME output `.txt` files**, such as:
-
-```bash
-Taal_273070_20200112_scenario_1.zip
-├── AQOutput_3DField_*.txt
-├── AQOutput_horizontal_*.txt
-```
+  - 2D surface fields such as air concentration, dry and wet deposition
+- 📊 Compute exceedance **probability maps** across simulation ensemble:
+  - Probability that a field ≥ threshold at each grid point
+- 📁 Integrated media viewer for browsing and downloading outputs
+- 🪵 Session logs and error reporting
 
 ---
 
@@ -95,48 +65,14 @@ Taal_273070_20200112_scenario_1.zip
 1. Upload ZIP
        │
        ▼
-2. Process into NetCDF
+2. Convert to NetCDF
        │
        ▼
-3. Visualize in 2D/3D or Analyze Exceedance
+3. Visualize in 2D/3D or Analyze Probability
        │
        ▼
-4. Export and Download Results
+4. Download Results
 ```
-
----
-
-## 🚀 How to Use
-
-1. Launch the dashboard:
-   ```bash
-   panel serve app.py --show
-   ```
-2. Upload a NAME ZIP file.
-3. Use the 2D/3D tabs to customize and generate visualizations.
-4. Explore results in the Media Viewer.
-5. Download animations, images, or logs.
-
----
-
-## 🧮 Core Components
-
-### File Processing
-
-- `NAMEDataProcessor.batch_process_zip()` reads raw `.txt` files and generates NetCDF:
-  - `ash_output/3D/*.nc`
-  - `ash_output/horizontal/*.nc`
-
-### Visualization
-
-- `Plot_3DField_Data`: Renders 3D altitude slices and profiles.
-- `Plot_Horizontal_Data`: Animates 2D horizontal surface fields.
-- Widgets allow threshold adjustment, zoom, and colormap selection.
-
-### Statistical Analysis
-
-- `AshExceedanceAnalyzer_3D`: Computes Bayesian exceedance maps for 3D fields.
-- `MultiFieldExceedanceAnalyzer_2D`: Similar maps for 2D surface fields.
 
 ---
 
@@ -144,45 +80,80 @@ Taal_273070_20200112_scenario_1.zip
 
 - **3D Field** – Animate altitude layers, generate profiles, export JPG frames.
 - **2D Field** – Animate air concentration, dry/wet deposition.
-- **Bayesian Analysis** – Create exceedance contour maps by variable and level.
-- **Media Viewer** – View and download all outputs.
+- **Probability Analysis** – Generate exceedance maps from multiple simulation folders.
+- **Media Viewer** – Browse and download `.gif`, `.jpg`, `.nc`, etc.
 - **Help** – User guide and ZIP structure reference.
 
 ---
 
-## ✅ Requirements
+## 📘 Probability Processor
 
-- Python 3.7+
-- Dependencies:
-  ```bash
-  pip install panel xarray numpy matplotlib netCDF4 cartopy
-  ```
+The `ProbabilityProcessor` computes exceedance probability maps from an ensemble of NAME simulation outputs. It compares each simulation’s values against a defined threshold and aggregates results to determine the probability of exceedance.
+
+### Key Capabilities
+
+- Supports both 3D and horizontal 2D fields
+- Accepts user-defined thresholds
+- Generates NetCDF outputs and `.gif` animations
+- Supports zoomed and full-map comparison panels
+
+### Example Output
+
+If 7 of 10 simulations exceed 0.02 g/m³ at a point, the probability = `0.7`.
+
+### Output Directory
+
+```
+media/
+├── Probability_3D/
+│   └── ash_concentration_probability_0.02.gif
+├── Probability_2D/
+│   ├── air_concentration_probability_0.00001.gif
+│   ├── dry_deposition_rate_probability_0.00001.gif
+└── ...
+```
+
+---
+
+## 🗂 Input Format
+
+Upload a `.zip` archive with `.txt` files structured as:
+
+```bash
+Taal_273070_20200112_scenario_1.zip
+├── AQOutput_3DField_*.txt
+├── AQOutput_horizontal_*.txt
+```
 
 ---
 
 ## 💾 Output Formats
 
-- `.gif` animations
-- `.jpg` image frames
-- `.zip` export of all generated media
-- `.log` file for errors
+- `.gif` animations (2D/3D/probability)
+- `.jpg` image snapshots
+- `.nc` NetCDF datasets
+- `.log` files for diagnostics
+- `project_path_map.json` for persistent folder navigation
 
 ---
 
-## 📁 Example Directory Structure
+## 📁 Example Directory Tree
 
 ```
 media/
 ├── 3D/
-│   └── ash_altitude10km_runTimes.gif
+│   └── Threshold_0.01/
+│       └── ash_concentration_T4.gif
 ├── 2D/
-│   └── air_concentration.gif
-├── Exceedance_3D/
-│   └── average_exceedance.png
-├── Exceedance_2D/
-│   └── air_concentration_exceedance.png
+│   └── Threshold_0.0001/
+│       └── air_concentration.gif
+├── Probability_3D/
+│   └── Threshold_0.02/
+│       └── ash_concentration_probability.gif
+├── Probability_2D/
+│   └── Threshold_0.00001/
+│       └── air_concentration_probability.gif
+├── all_exports.zip
 ├── app_errors.log
-└── all_exports.zip
+└── project_path_map.json
 ```
-
-
